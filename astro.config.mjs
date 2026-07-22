@@ -2,11 +2,10 @@
 import { defineConfig } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
 
-const repoName = process.env.PAGES_REPO;
-
+/** @type {import('astro').AstroUserConfig} */
 export default defineConfig({
-  site: process.env.PAGES_SITE,
-  base: repoName ? `/${repoName}` : "/",
+  site: import.meta.env.PUBLIC_SITE,
+  base: import.meta.env.PUBLIC_BASE ?? "/",
   vite: {
     plugins: [tailwindcss()],
   },
