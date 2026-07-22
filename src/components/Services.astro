@@ -1,73 +1,58 @@
 ---
 const services = [
   {
-    title: "AI Strategy",
-    description: "We look at your data and tell you what to build first. You get a project list with timelines.",
-    icon: "sparkles",
+    title: "AI Knowledge Bases",
+    description: "We connect your documents and databases to AI. Your teams ask questions in natural language and get accurate, sourced answers. Access controls match your business rules.",
   },
   {
-    title: "Machine Learning & Deep Learning",
-    description: "We build and deploy machine learning models. Computer vision, text analysis, whatever your data supports.",
-    icon: "database",
+    title: "AI Agents",
+    description: "We build agents that act on your behalf. They read data, make decisions, and integrate with CRM, messaging, and project management tools your teams already use.",
   },
   {
-    title: "Custom Software Development",
-    description: "We build web applications and APIs that fit your workflow. Clean architecture, tested code after launch.",
-    icon: "code",
+    title: "Custom AI Models",
+    description: "We train models on your data. They understand your domain, deliver better accuracy than generic models, and run on your own infrastructure at lower cost.",
+  },
+  {
+    title: "Voice AI",
+    description: "We build voice-powered products. Customer support bots, meeting assistants, hands-free interfaces. Private by default, running on your hardware.",
   },
   {
     title: "Data Engineering",
-    description: "We build data pipelines that collect and serve your data. Your models stay accurate. Your team has what they need.",
-    icon: "dashboard",
+    description: "We build pipelines that collect and serve your data. Your teams get reliable access to information. Your models stay accurate with fresh data.",
   },
   {
-    title: "MLOps & Deployment",
-    description: "We get models into production and keep them running. Automated training and monitoring on infrastructure that scales with your workload.",
-    icon: "globe",
+    title: "Custom Software",
+    description: "We build web applications and APIs that fit your workflow. Clean architecture and tested code. Your team maintains the product after launch.",
   },
   {
-    title: "AI Consulting & Training",
-    description: "Workshops and code reviews. Your team works with AI tools after we leave.",
-    icon: "shield",
+    title: "MLOps & Infrastructure",
+    description: "We ship AI systems into production and keep them running. Automated training, monitoring, and scaling. Your pipeline works without babysitting.",
+  },
+  {
+    title: "Technical Strategy",
+    description: "We assess your data, pick the right approach, and scope the build. You get a plan with timelines and a clear yes or no.",
   },
 ];
-
-function getIcon(name: string) {
-  const icons: Record<string, string> = {
-    sparkles: '<path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z" />',
-    database: '<path stroke-linecap="round" stroke-linejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3m3 3a3 3 0 100 6h13.5a3 3 0 100-6m-16.5-3a3 3 0 013-3h13.5a3 3 0 013 3m-19.5 0a4.5 4.5 0 01.9-2.7L5.737 5.1a3.375 3.375 0 012.7-1.35h7.126c1.062 0 2.062.5 2.7 1.35l2.587 3.45a4.5 4.5 0 01.9 2.7m0 0a3 3 0 01-3 3m0 3h.008v.008h-.008v-.008zm0-6h.008v.008h-.008v-.008zm-3 6h.008v.008h-.008v-.008zm0-6h.008v.008h-.008v-.008z" />',
-    code: '<path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />',
-    dashboard: '<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h-7.5m19.5 0H9.75m0 0l-1.5-1.5m0 0l-1.5 1.5m3 0h3.375c.621 0 1.125-.504 1.125-1.125V16.5a1.125 1.125 0 00-1.125-1.125H9.75" />',
-    globe: '<path stroke-linecap="round" stroke-linejoin="round" d="M5.636 18.364a9 9 0 000-12.728m12.728 0a9 9 0 010 12.728m-9.9-2.829a5 5 0 010-7.07m7.072 0a5 5 0 010 7.07M13 12a1 1 0 11-2 0 1 1 0 012 0z" />',
-    shield: '<path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />',
-  };
-  return icons[name] || "";
-}
 ---
 
-<section id="services" class="py-20 sm:py-28 bg-white">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="max-w-2xl mb-16">
-      <p class="text-sm font-medium text-brand-600 tracking-widest uppercase mb-4">Services</p>
-      <h2 class="text-3xl sm:text-4xl font-bold text-surface-900 tracking-tight">
+<section id="services" class="bg-ivory pt-16 pb-20 sm:pt-20 sm:pb-24 lg:pt-24 lg:pb-28">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="max-w-2xl mb-12 sm:mb-16">
+      <p class="text-xs font-medium text-brand-600 uppercase tracking-wider mb-3">Services</p>
+      <h2 class="text-2xl sm:text-3xl font-semibold text-surface-900 tracking-tight">
         What we do
       </h2>
-      <p class="mt-4 text-lg text-surface-500 leading-relaxed">
-        From planning to production. Pick what you need, or let us scope the whole engagement.
+      <p class="mt-4 text-base text-surface-600 leading-relaxed">
+        Data pipelines to production AI products. Pick what you need, or let us scope the whole engagement.
       </p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-8">
       {services.map((service) => (
-        <div class="group p-6 lg:p-8 rounded-2xl border border-surface-200 hover:border-surface-300 hover:shadow-lg hover:shadow-surface-100/50 transition-all duration-200">
-          <div class="w-12 h-12 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center mb-5 group-hover:bg-brand-600 group-hover:text-white transition-colors duration-200">
-            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-              <path fill="none" d={getIcon(service.icon)} />
-            </svg>
-          </div>
-          <h3 class="text-lg font-semibold text-surface-900 mb-2">{service.title}</h3>
-          <p class="text-sm text-surface-500 leading-relaxed">{service.description}</p>
-        </div>
+        <article class="py-5 border-b border-surface-200/60">
+          <h3 class="text-base font-medium text-surface-900 mb-2">{service.title}</h3>
+          <p class="text-sm text-surface-600 leading-relaxed">{service.description}</p>
+        </article>
       ))}
     </div>
   </div>

@@ -1,30 +1,163 @@
 ---
 ---
 
-<section class="relative overflow-hidden bg-surface-950">
-  <!-- Subtle gradient background -->
-  <div class="absolute inset-0 bg-gradient-to-br from-surface-950 via-brand-950/40 to-surface-950" />
-  <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(39,169,91,0.1),transparent_60%)]" />
+<section class="bg-ivory pt-20 pb-16 sm:pt-28 sm:pb-20 lg:pt-32 lg:pb-24">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <div>
+        <p class="text-sm text-surface-500 mb-6">
+          AI &middot; Machine Learning &middot; Data Engineering
+        </p>
+        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-semibold text-surface-900 leading-tight tracking-tight">
+          We build AI systems for production.
+        </h1>
+        <p class="mt-6 text-lg text-surface-600 leading-relaxed max-w-xl">
+          <span class="font-brand font-bold">Hoja</span> designs and ships machine learning models and custom software. We turn your data into prediction models and applications your team uses.
+        </p>
+        <div class="mt-8 flex gap-4">
+          <a href="#contact" class="text-sm font-medium text-white bg-brand-600 hover:bg-brand-700 px-5 py-2.5 rounded-md transition-colors">
+            Get in Touch
+          </a>
+          <a href="#services" class="text-sm font-medium text-surface-700 hover:text-surface-900 px-5 py-2.5 rounded-md transition-colors border border-surface-300 hover:border-surface-400">
+            Our Services
+          </a>
+        </div>
+      </div>
 
-  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32 lg:py-40">
-    <div class="max-w-3xl">
-      <p class="text-sm font-medium text-brand-400 tracking-widest uppercase mb-6">
-        AI &middot; Machine Learning &middot; Software Development
-      </p>
-      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight tracking-tight">
-        We build AI systems for production.
-      </h1>
-      <p class="mt-6 text-lg sm:text-xl text-surface-300 leading-relaxed max-w-2xl">
-        Hoja designs and ships machine learning models and custom software. We turn your data into prediction models and applications your team uses every day.
-      </p>
-      <div class="mt-10 flex flex-wrap gap-4">
-        <a href="#contact" class="inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-white bg-brand-600 hover:bg-brand-500 rounded-lg transition-colors">
-          Get in Touch
-        </a>
-        <a href="#services" class="inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-surface-300 border border-surface-700 hover:border-surface-500 hover:text-white rounded-lg transition-colors">
-          Our Services
-        </a>
+      <div class="hidden lg:flex items-center justify-center">
+        <canvas id="network" width="400" height="400" class="w-72 h-72 sm:w-80 sm:h-80"></canvas>
       </div>
     </div>
   </div>
 </section>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const canvas = document.getElementById("network");
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    const W = canvas.width;
+    const H = canvas.height;
+
+    const greens = ["#4d9622", "#6bb82d", "#8fd042", "#b5e470"];
+    const lines = ["#4d9622", "#6bb82d", "#3a741c"];
+
+    const numNodes = 9 + Math.floor(Math.random() * 6);
+    const nodes = [];
+
+    for (let i = 0; i < numNodes; i++) {
+      nodes.push({
+        x: 40 + Math.random() * (W - 80),
+        y: 40 + Math.random() * (H - 80),
+        vx: (Math.random() - 0.5) * 0.6,
+        vy: (Math.random() - 0.5) * 0.6,
+        r: 2 + Math.random() * 5,
+        color: greens[Math.floor(Math.random() * greens.length)],
+        phase: Math.random() * Math.PI * 2,
+        speed: 0.8 + Math.random() * 1.2,
+      });
+    }
+
+    const connections = [];
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const dx = nodes[i].x - nodes[j].x;
+        const dy = nodes[i].y - nodes[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 140) {
+          connections.push({
+            a: i,
+            b: j,
+            stroke: lines[Math.floor(Math.random() * lines.length)],
+            width: dist < 80 ? 1 : 0.5,
+            pulse: Math.random() * Math.PI * 2,
+            pulseSpeed: 0.5 + Math.random() * 1.5,
+          });
+        }
+      }
+    }
+
+    const numDots = 6 + Math.floor(Math.random() * 4);
+    const dots = [];
+    for (let i = 0; i < numDots; i++) {
+      dots.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        r: 0.8 + Math.random() * 1.2,
+        color: "#8fd042",
+      });
+    }
+
+    let t = 0;
+    function animate() {
+      t += 0.016;
+      ctx.clearRect(0, 0, W, H);
+
+      ctx.save();
+      ctx.translate(W / 2, H / 2);
+      ctx.rotate(t * 0.08);
+      ctx.strokeStyle = "#d8d1c1";
+      ctx.lineWidth = 0.5;
+      ctx.beginPath();
+      ctx.arc(0, 0, 150, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+
+      connections.forEach((c) => {
+        const nA = nodes[c.a];
+        const nB = nodes[c.b];
+        const opacity = 0.25 + 0.25 * Math.sin(t * c.pulseSpeed + c.pulse);
+        ctx.strokeStyle = c.stroke + Math.round(opacity * 255).toString(16).padStart(2, "0");
+        ctx.lineWidth = c.width;
+        ctx.beginPath();
+        ctx.moveTo(nA.x, nA.y);
+        ctx.lineTo(nB.x, nB.y);
+        ctx.stroke();
+      });
+
+      nodes.forEach((n) => {
+        n.x += n.vx * n.speed;
+        n.y += n.vy * n.speed;
+
+        const wobble = Math.sin(t * n.speed + n.phase);
+        if (Math.abs(n.vx) < 0.01) n.vx = (Math.random() - 0.5) * 0.3;
+        if (Math.abs(n.vy) < 0.01) n.vy = (Math.random() - 0.5) * 0.3;
+
+        if (n.x < 30 || n.x > W - 30) n.vx *= -1;
+        if (n.y < 30 || n.y > H - 30) n.vy *= -1;
+
+        n.x = Math.max(30, Math.min(W - 30, n.x));
+        n.y = Math.max(30, Math.min(H - 30, n.y));
+
+        const glow = 0.2 + 0.15 * Math.sin(t * n.speed + n.phase);
+        ctx.shadowColor = n.color;
+        ctx.shadowBlur = 8 + 4 * glow;
+        ctx.fillStyle = n.color;
+        ctx.beginPath();
+        ctx.arc(n.x, n.y + wobble * 3, n.r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      });
+
+      dots.forEach((d) => {
+        d.x += d.vx;
+        d.y += d.vy;
+        if (d.x < 0 || d.x > W) d.vx *= -1;
+        if (d.y < 0 || d.y > H) d.vy *= -1;
+        ctx.fillStyle = d.color;
+        ctx.globalAlpha = 0.6;
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      });
+
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  });
+</script>

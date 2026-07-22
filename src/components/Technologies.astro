@@ -1,0 +1,77 @@
+---
+const technologies = [
+  // Cloud & AI Services
+  { name: "OpenAI", slug: null, logo: "/logos/openai.svg" },
+  { name: "Anthropic", slug: "anthropic", logo: null },
+  { name: "Google Cloud", slug: "googlecloud", logo: null },
+  { name: "AWS", slug: null, logo: "/logos/aws.svg" },
+  // AI Frameworks & Tools
+  { name: "LangChain", slug: "langchain", logo: null },
+  { name: "LangGraph", slug: "langgraph", logo: null },
+  { name: "vLLM", slug: "vllm", logo: null },
+  { name: "PyTorch", slug: "pytorch", logo: null },
+  { name: "TensorFlow", slug: "tensorflow", logo: null },
+  // Data & Models
+  { name: "Databricks", slug: "databricks", logo: null },
+  { name: "Hugging Face", slug: "huggingface", logo: null },
+  // Infrastructure
+  { name: "Docker", slug: "docker", logo: null },
+  { name: "Kubernetes", slug: "kubernetes", logo: null },
+  { name: "Redis", slug: "redis", logo: null },
+  { name: "Neo4j", slug: "neo4j", logo: null },
+  { name: "Supabase", slug: "supabase", logo: null },
+];
+---
+
+<section id="technologies" class="bg-ivory pt-16 pb-20 sm:pt-20 sm:pb-24 lg:pt-24 lg:pb-28">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="max-w-2xl mb-12 sm:mb-16">
+      <p class="text-xs font-medium text-brand-600 uppercase tracking-wider mb-3">Technologies</p>
+      <h2 class="text-2xl sm:text-3xl font-semibold text-surface-900 tracking-tight">
+        Our technology stack
+      </h2>
+      <p class="mt-4 text-base text-surface-600 leading-relaxed">
+        We build on platforms that scale.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-8">
+      {technologies.map((tech) => (
+        <div class="flex flex-col items-center text-center gap-2 tech-item">
+          <div class="tech-icon w-8 h-8 relative">
+            <img
+              src={tech.logo ?? `https://cdn.simpleicons.org/${tech.slug}`}
+              alt={tech.name}
+              class="w-8 h-8 object-contain transition-opacity duration-300"
+              style="filter: grayscale(1) brightness(0.4); position: absolute; top: 0; left: 0;"
+            />
+            <img
+              src={tech.logo ?? `https://cdn.simpleicons.org/${tech.slug}`}
+              alt={tech.name}
+              class="w-8 h-8 object-contain transition-opacity duration-300 tech-color"
+              style="position: absolute; top: 0; left: 0; opacity: 0;"
+            />
+          </div>
+          <p class="text-sm font-semibold text-surface-900">{tech.name}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  document.querySelectorAll(".tech-item").forEach((item) => {
+    const colorImg = item.querySelector(".tech-color");
+    const grayImg = item.querySelector(".tech-icon img:first-child");
+
+    item.addEventListener("mouseenter", () => {
+      grayImg.style.opacity = "0";
+      colorImg.style.opacity = "1";
+    });
+
+    item.addEventListener("mouseleave", () => {
+      grayImg.style.opacity = "1";
+      colorImg.style.opacity = "0";
+    });
+  });
+</script>

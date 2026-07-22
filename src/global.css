@@ -1,6 +1,22 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Julia Mono";
+  src: url("https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.062/JuliaMono-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Julia Mono";
+  src: url("https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.062/JuliaMono-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   --color-brand-50: #f6fde8;
   --color-brand-100: #edf9ce;
@@ -26,5 +42,9 @@
   --color-surface-900: #272320;
   --color-surface-950: #161311;
 
+  --color-ivory: #faf8f2;
+  --color-ivory-dark: #f2edd9;
+
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-brand: "Julia Mono", monospace;
 }
