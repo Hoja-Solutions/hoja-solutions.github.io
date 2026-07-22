@@ -1,7 +1,7 @@
 ---
 title: "Building Hoja's website with an open-source LLM"
 description: "We built our production website with Qwen3.6-27B, an open-source model from Alibaba. What frontier open-weight models can do now, and where you still need a person in the loop."
-date: 2025-07-22
+date: 2026-07-21T12:00:00
 tags: ["AI", "Engineering", "Open Source"]
 ---
 

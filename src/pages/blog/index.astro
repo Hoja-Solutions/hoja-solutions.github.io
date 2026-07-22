@@ -14,7 +14,7 @@ const allTags = [...new Set(posts.flatMap((p) => p.data.tags ?? []))].sort();
 
 <BlogLayout
   title="Blog — Hoja"
-  description="Engineering notes, post-mortems, and technical deep dives from Hoja."
+  description="Technical write-ups from Hoja: open-source tools, model choices, and the engineering decisions behind our projects."
   date={new Date()}
 >
   <div class="flex flex-col min-h-screen">
@@ -24,10 +24,10 @@ const allTags = [...new Set(posts.flatMap((p) => p.data.tags ?? []))].sort();
         <div class="max-w-3xl mx-auto px-6 lg:px-8">
           <p class="text-xs font-medium text-brand-600 uppercase tracking-wider mb-3">Blog</p>
           <h1 class="text-2xl sm:text-3xl font-semibold text-surface-900 tracking-tight">
-            Engineering notes
+            How we build
           </h1>
           <p class="mt-4 text-base text-surface-600 leading-relaxed">
-            Post-mortems, architectural decisions, and technical write-ups from our projects.
+            Technical write-ups from our projects: open-source tools we ship, the models we run, and the engineering decisions we make along the way.
           </p>
           {allTags.length > 0 && (
             <div class="flex flex-wrap gap-2 mt-8" id="tag-filters">

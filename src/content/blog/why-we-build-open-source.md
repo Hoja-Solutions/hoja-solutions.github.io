@@ -1,7 +1,7 @@
 ---
 title: "Why we build open-source"
 description: "This website is a public GitHub repository, and so is the rest of our stack. The practical case for building on open source."
-date: 2025-07-22
+date: 2026-07-22T12:00:00
 tags: ["Open Source", "Engineering"]
 ---
 

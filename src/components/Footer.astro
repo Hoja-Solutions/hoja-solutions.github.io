@@ -3,21 +3,18 @@ const columns = [
   {
     title: "Services",
     links: [
-      { label: "AI Knowledge Bases", href: "#services" },
-      { label: "AI Agents", href: "#services" },
-      { label: "Custom AI Models", href: "#services" },
-      { label: "Voice AI", href: "#services" },
-      { label: "Data Engineering", href: "#services" },
-      { label: "Custom Software", href: "#services" },
-      { label: "MLOps & Infrastructure", href: "#services" },
-      { label: "Technical Strategy", href: "#services" },
+      { label: "AI Knowledge Bases", href: "/#services" },
+      { label: "AI Agents", href: "/#services" },
+      { label: "Data Engineering", href: "/#services" },
+      { label: "Custom Software", href: "/#services" },
+      { label: "MLOps & Infrastructure", href: "/#services" },
+      { label: "Technical Strategy", href: "/#services" },
     ],
   },
   {
     title: "Company",
     links: [
-      { label: "About", href: "#about" },
-      { label: "Contact", href: "#contact" },
+      { label: "Blog", href: "/blog" },
     ],
   },
   {
@@ -25,7 +22,7 @@ const columns = [
     links: [
       { label: "LinkedIn", href: "https://linkedin.com/company/hoja-solutions", external: true },
       { label: "GitHub", href: "https://github.com/hoja-solutions", external: true },
-      { label: "X / Twitter", href: "https://x.com/hoja_solutions", external: true },
+      { label: "X", href: "https://x.com/hoja_solutions", external: true },
     ],
   },
 ];
@@ -60,9 +57,14 @@ const columns = [
     </div>
 
     <div class="mt-10 pt-6 border-t border-surface-200/50 flex flex-col sm:flex-row items-center justify-between gap-3">
-      <div class="flex items-center gap-2">
-        <img src="/favicon.svg" class="w-5 h-5" alt="Hoja" />
-        <span class="text-sm text-surface-700 font-brand font-bold">Hoja</span>
+      <div>
+        <div class="flex items-center gap-2">
+          <img src="/favicon.svg" class="w-5 h-5" alt="Hoja" />
+          <span class="text-sm text-surface-700 font-brand font-bold">Hoja</span>
+        </div>
+        <p class="mt-2 text-xs text-surface-500">
+          <a href="mailto:contact@hoja.solutions" class="hover:text-surface-900 transition-colors">contact@hoja.solutions</a>
+        </p>
       </div>
       <p class="text-xs text-surface-500">
         &copy; {new Date().getFullYear()} <span class="font-brand font-bold">Hoja</span>. All rights reserved.
