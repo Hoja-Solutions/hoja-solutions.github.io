@@ -48,3 +48,47 @@
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
   --font-brand: "Julia Mono", monospace;
 }
+
+/* Prose styles for blog content */
+.prose p {
+  @apply text-base text-surface-700 leading-relaxed mb-4;
+}
+.prose h2 {
+  @apply text-xl font-semibold text-surface-900 mt-8 mb-3 tracking-tight;
+}
+.prose h3 {
+  @apply text-lg font-semibold text-surface-900 mt-6 mb-2;
+}
+.prose ul, .prose ol {
+  @apply text-base text-surface-700 mb-4 pl-6;
+}
+.prose ul {
+  @apply list-disc;
+}
+.prose ol {
+  @apply list-decimal;
+}
+.prose li {
+  @apply mb-1;
+}
+.prose a {
+  @apply text-brand-600 underline hover:text-brand-700;
+}
+.prose code {
+  @apply bg-surface-100 text-surface-800 text-sm px-1.5 py-0.5 rounded font-mono;
+}
+.prose pre {
+  @apply bg-surface-900 text-surface-100 text-sm rounded-lg p-4 mb-4 overflow-x-auto;
+}
+.prose pre code {
+  @apply bg-transparent text-inherit p-0 rounded-none;
+}
+.prose blockquote {
+  @apply border-l-2 border-brand-500 pl-4 text-surface-600 italic mb-4;
+}
+.prose hr {
+  @apply border-surface-200 my-8;
+}
+.prose img {
+  @apply rounded-lg mb-4;
+}

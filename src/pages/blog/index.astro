@@ -1,0 +1,130 @@
+---
+import BlogLayout from "../../layouts/BlogLayout.astro";
+import Navbar from "../../components/Navbar.astro";
+import Footer from "../../components/Footer.astro";
+import { getCollection } from "astro:content";
+
+const posts = await getCollection("blog");
+
+const sorted = posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+// Collect all unique tags from all posts
+const allTags = [...new Set(posts.flatMap((p) => p.data.tags ?? []))].sort();
+---
+
+<BlogLayout
+  title="Blog — Hoja"
+  description="Engineering notes, post-mortems, and technical deep dives from Hoja."
+  date={new Date()}
+>
+  <div class="flex flex-col min-h-screen">
+    <Navbar />
+    <main class="flex-1">
+      <section class="bg-ivory pt-16 pb-20 sm:pt-20 sm:pb-24">
+        <div class="max-w-3xl mx-auto px-6 lg:px-8">
+          <p class="text-xs font-medium text-brand-600 uppercase tracking-wider mb-3">Blog</p>
+          <h1 class="text-2xl sm:text-3xl font-semibold text-surface-900 tracking-tight">
+            Engineering notes
+          </h1>
+          <p class="mt-4 text-base text-surface-600 leading-relaxed">
+            Post-mortems, architectural decisions, and technical write-ups from our projects.
+          </p>
+          {allTags.length > 0 && (
+            <div class="flex flex-wrap gap-2 mt-8" id="tag-filters">
+              <button
+                class="tag-filter text-xs font-medium px-3 py-1.5 rounded-full border border-surface-300 text-surface-600 hover:border-brand-500 hover:text-brand-600 transition-colors"
+                data-tag="all"
+              >
+                All
+              </button>
+              {allTags.map((tag) => (
+                <button
+                  class="tag-filter text-xs font-medium px-3 py-1.5 rounded-full border border-surface-300 text-surface-600 hover:border-brand-500 hover:text-brand-600 transition-colors"
+                  data-tag={tag}
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section class="bg-ivory pb-20 sm:pb-24">
+        <div class="max-w-3xl mx-auto px-6 lg:px-8">
+          {sorted.length === 0 ? (
+            <p class="text-sm text-surface-500">No posts yet.</p>
+          ) : (
+            <div class="divide-y divide-surface-200/60" id="post-list">
+              {sorted.map((post) => (
+                <article
+                  class="post-item flex flex-col py-5"
+                  data-tags={JSON.stringify(post.data.tags ?? [])}
+                >
+                  <div class="flex items-baseline gap-3 mb-1">
+                    <time class="text-xs text-surface-500 font-brand tabular-nums whitespace-nowrap">
+                      {post.data.date.toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </time>
+                    {post.data.tags?.length && (
+                      <span class="text-xs text-surface-500">
+                        {post.data.tags.join(", ")}
+                      </span>
+                    )}
+                  </div>
+                  <h2 class="text-base font-medium text-surface-900 mb-1">
+                    <a href={`/blog/${post.id}`} class="hover:text-brand-600 transition-colors">
+                      {post.data.title}
+                    </a>
+                  </h2>
+                  <p class="text-sm text-surface-600 leading-relaxed">
+                    {post.data.description}
+                  </p>
+                </article>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+    </main>
+    <Footer />
+  </div>
+</BlogLayout>
+
+<script>
+  const tagButtons = document.querySelectorAll(".tag-filter");
+  const posts = document.querySelectorAll(".post-item");
+
+  tagButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const tag = button.dataset.tag;
+
+      // Update active state
+      tagButtons.forEach((btn) =>
+        btn.classList.remove(
+          "border-brand-500",
+          "bg-brand-50",
+          "text-brand-700",
+        ),
+      );
+      button.classList.add(
+        "border-brand-500",
+        "bg-brand-50",
+        "text-brand-700",
+      );
+
+      // Filter posts
+      posts.forEach((post) => {
+        if (tag === "all") {
+          post.style.display = "flex";
+        } else {
+          const postTags = JSON.parse(post.dataset.tags);
+          post.style.display = postTags.includes(tag) ? "flex" : "none";
+        }
+      });
+    });
+  });
+</script>
