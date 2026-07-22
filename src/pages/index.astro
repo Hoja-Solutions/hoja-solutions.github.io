@@ -1,0 +1,25 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Navbar from "../components/Navbar.astro";
+import Hero from "../components/Hero.astro";
+import Services from "../components/Services.astro";
+import About from "../components/About.astro";
+import CTA from "../components/CTA.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<BaseLayout
+  title="Hoja — AI & Software Consultancy"
+  description="Hoja designs and ships AI systems and custom software. From planning to production."
+>
+  <div class="flex flex-col min-h-screen">
+    <Navbar />
+    <main class="flex-1">
+      <Hero />
+      <Services />
+      <About />
+      <CTA />
+    </main>
+    <Footer />
+  </div>
+</BaseLayout>

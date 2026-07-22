@@ -1,0 +1,31 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "tools": {
+    "web-search_*": false,
+    "context7_*": false,
+    "serena_*": false
+  },
+  "agent": {
+    "web-search": {
+      "description": "web-search operations",
+      "mode": "subagent",
+      "tools": {
+        "web-search_*": true
+      }
+    },
+    "context7": {
+      "description": "context7 operations",
+      "mode": "subagent",
+      "tools": {
+        "context7_*": true
+      }
+    },
+    "serena": {
+      "description": "serena operations",
+      "mode": "subagent",
+      "tools": {
+        "serena_*": true
+      }
+    }
+  }
+}
