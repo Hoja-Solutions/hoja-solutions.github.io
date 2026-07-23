@@ -1,7 +1,7 @@
 ---
 title: "agent-stdlib: an installable agent toolkit"
 description: "Anthropic's engineering blog describes how to build agents in production. agent-stdlib packages those procedures into installable skills, MCP servers, and safety hooks you can run in any harness."
-date: 2026-07-23
+date: 2026-07-22T12:00:00
 tags: ["Engineering", "Open Source", "AI Agents"]
 ---
 

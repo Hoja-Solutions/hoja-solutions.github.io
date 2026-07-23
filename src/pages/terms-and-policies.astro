@@ -1,0 +1,84 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<BaseLayout
+  title="Terms and Policies — Hoja"
+  description="Engagement terms, data privacy, AI limitations, and open-source policies."
+>
+  <div class="flex flex-col min-h-screen">
+    <Navbar />
+    <main class="flex-1">
+      <section class="bg-ivory pt-16 pb-20 sm:pt-20 sm:pb-24">
+        <div class="max-w-3xl mx-auto px-6 lg:px-8">
+          <p class="text-xs font-medium text-brand-600 uppercase tracking-wider mb-3">Legal</p>
+          <h1 class="text-2xl sm:text-3xl font-semibold text-surface-900 tracking-tight">
+            Terms and Policies
+          </h1>
+          <p class="mt-2 text-xs text-surface-500">Last updated: July 2026</p>
+
+          <div class="prose mt-8">
+            <section>
+              <h2>1. Engagement & Scope of Work</h2>
+              <p>
+                We operate under a Master Services Agreement (MSA) for each client engagement, supplemented by a Statement of Work (SOW) that defines deliverables, timelines, and acceptance criteria. Work proceeds in phases, and scope changes require a written addendum. Invoices are issued per milestone or monthly, payable within 30 days.
+              </p>
+            </section>
+
+            <section>
+              <h2>2. Data Processing & Privacy</h2>
+              <p>
+                We treat all client data as confidential and process it solely to deliver the agreed work. Data resides on isolated infrastructure, encrypted at rest and in transit. We do not retain client data beyond the project lifecycle unless explicitly requested, and we delete or return all materials at project close. If personal data is involved, we execute a Data Processing Agreement (DPA) that outlines protection measures, residency requirements, and deletion schedules.
+              </p>
+            </section>
+
+            <section>
+              <h2>3. Intellectual Property</h2>
+              <p>
+                Upon full payment, the client owns the delivered code, models, documentation, and configurations. We retain the right to reuse generic components, internal tooling, and open-source dependencies that are not specific to the client. Background IP remains ours. We do not claim ownership over client data or business logic.
+              </p>
+            </section>
+
+            <section>
+              <h2>4. AI & Model Limitations</h2>
+              <p>
+                Machine learning systems are probabilistic. We design, train, and evaluate models to perform within documented parameters, but we do not guarantee 100% accuracy or deterministic outputs. Clients should implement human oversight for critical decisions and validate model behavior against their own data distributions before deploying to production. We recommend periodic re-evaluation as data drifts or requirements change.
+              </p>
+            </section>
+
+            <section>
+              <h2>5. Open Source & Licensing</h2>
+              <p>
+                We build on open-source tools and open-weight models. We track all dependencies, comply with their licenses, and include required attribution in delivered software. We avoid copyleft-licensed components in client deliverables unless the client explicitly agrees to the terms. If we contribute back to the open-source community, we do so without incorporating client IP or confidential data.
+              </p>
+            </section>
+
+            <section>
+              <h2>6. Acceptable Use</h2>
+              <p>
+                Clients agree not to use our systems for illegal activities, harassment, deception, or any purpose that violates applicable law. Rate limits and usage thresholds apply to production deployments. Abuse, including automated scraping, credential stuffing, or malicious prompt injection, will result in suspension and may trigger legal action.
+              </p>
+            </section>
+
+            <section>
+              <h2>7. Limitation of Liability</h2>
+              <p>
+                Our liability for any claim arising from an engagement is capped at the total value of that engagement. We are not liable for indirect, incidental, or consequential damages, including lost profits or data loss resulting from third-party outages, client-side misconfigurations, or force majeure events.
+              </p>
+            </section>
+
+            <section>
+              <h2>8. Disclaimer</h2>
+              <p>
+                This page outlines our standard operating policies. It does not replace the contractual terms in an MSA or SOW. If you have a question about a specific engagement, contact us before signing. We recommend having your own legal counsel review all agreements.
+              </p>
+            </section>
+          </div>
+        </div>
+      </section>
+    </main>
+    <Footer />
+  </div>
+</BaseLayout>
