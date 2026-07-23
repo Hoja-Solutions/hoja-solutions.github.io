@@ -6,14 +6,19 @@ type Props = {
   title: string;
   description: string;
   date: string | Date;
+  image?: string;
   children: AstroComponent;
 };
 
-const { title, description, date, children } = Astro.props;
+const { title, description, date, image } = Astro.props;
+const canonical = Astro.site
+  ? new URL(Astro.url.pathname, Astro.site).href
+  : Astro.url.href;
 const formattedDate = new Date(date).toLocaleDateString("en-US", {
   year: "numeric",
   month: "long",
   day: "numeric",
+  timeZone: "UTC",
 });
 ---
 
@@ -26,7 +31,22 @@ const formattedDate = new Date(date).toLocaleDateString("en-US", {
     <meta property="og:type" content="article" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <link rel="canonical" href={canonical} />
     <meta property="article:published_time" content={new Date(date).toISOString()} />
+    {image && (
+      <Fragment>
+        <meta property="og:image" content={image} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:alt" content={title} />
+      </Fragment>
+    )}
+    <meta name="twitter:card" content={image ? "summary_large_image" : "summary"} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {image && <meta name="twitter:image" content={image} />}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

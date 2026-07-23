@@ -3,6 +3,7 @@ import BlogLayout from "../../layouts/BlogLayout.astro";
 import Navbar from "../../components/Navbar.astro";
 import Footer from "../../components/Footer.astro";
 import { getCollection, render } from "astro:content";
+import { generatePortrait } from "../../lib/portrait";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog");
@@ -15,71 +16,21 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content } = await render(post);
 
-// Generate a deterministic seed from post content
-const content = post.body;
-const hash = content.split("").reduce((acc, char) => {
-  const charCode = char.charCodeAt(0);
-  return ((acc << 5) - acc + charCode) | 0;
-}, 0);
+// Deterministic constellation illustration, shared with the Open Graph image.
+const { points, lines } = generatePortrait(post.body);
 
-let s = Math.abs(hash);
-const next = () => {
-  s = (s * 16807 + 11) % 2147483647;
-  return s / 2147483647;
-};
-const rand = (min, max) => min + next() * (max - min);
-
-const colors = [
-  "#6bb82d",
-  "#4d9622",
-  "#b5ada0",
-  "#908779",
-  "#8fd042",
-];
-
-// Grid-based constellation: percentage coordinates fill any container shape
-const cols = 12 + Math.floor(rand(0, 5));
-const rows = 4 + Math.floor(rand(0, 2));
-const cellW = 100 / cols;
-const cellH = 100 / rows;
-const points = [];
-
-for (let row = 0; row < rows; row++) {
-  for (let col = 0; col < cols; col++) {
-    const jx = rand(-cellW * 0.4, cellW * 0.4);
-    const jy = rand(-cellH * 0.4, cellH * 0.4);
-    const x = Math.max(2, Math.min(98, cellW * (col + 0.5) + jx));
-    const y = Math.max(2, Math.min(98, cellH * (row + 0.5) + jy));
-    points.push({ x, y, color: colors[Math.floor(rand(0, colors.length))] });
-  }
-}
-
-// Connect each point to its nearest neighbors
-const lines = [];
-points.forEach((p, i) => {
-  const dists = points.map((q, j) => ({
-    j,
-    d: Math.sqrt((p.x - q.x) ** 2 + (p.y - q.y) ** 2),
-  }));
-  dists.sort((a, b) => a.d - b.d);
-  const numConn = 2 + Math.floor(rand(0, 2));
-  for (let k = 0; k < Math.min(numConn, dists.length - 1); k++) {
-    if (dists[k].j > i) {
-      lines.push({
-        a: i,
-        b: dists[k].j,
-        color: colors[Math.floor(rand(0, colors.length))],
-        opacity: rand(0.1, 0.35),
-      });
-    }
-  }
-});
+// Absolute URL to the generated preview image for social cards.
+const base = import.meta.env.BASE_URL;
+const ogImage = Astro.site
+  ? new URL(`${base}og/${post.id}.png`, Astro.site).href
+  : undefined;
 ---
 
 <BlogLayout
   title={`${post.data.title} — Hoja`}
   description={post.data.description}
   date={post.data.date}
+  image={ogImage}
 >
   <div class="flex flex-col min-h-screen">
     <Navbar />
@@ -111,6 +62,7 @@ points.forEach((p, i) => {
                   year: "numeric",
                   month: "long",
                   day: "numeric",
+                  timeZone: "UTC",
                 })}
               </time>
               {post.data.tags?.length && (
