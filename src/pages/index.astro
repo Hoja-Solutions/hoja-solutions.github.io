@@ -6,11 +6,36 @@ import Services from "../components/Services.astro";
 import Technologies from "../components/Technologies.astro";
 import CTA from "../components/CTA.astro";
 import Footer from "../components/Footer.astro";
+
+const base = import.meta.env.BASE_URL;
+const ogImage = Astro.site
+  ? new URL(`${base}og-home.png`, Astro.site).href
+  : undefined;
+const logo = Astro.site
+  ? new URL(`${base}apple-touch-icon.png`, Astro.site).href
+  : undefined;
+
+const org = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Hoja",
+  url: Astro.site?.href ?? "https://hoja-solutions.github.io",
+  description:
+    "AI and software consultancy building on open-source and open-weight technologies.",
+  ...(logo ? { logo } : {}),
+  sameAs: [
+    "https://linkedin.com/company/hoja-solutions",
+    "https://github.com/hoja-solutions",
+    "https://huggingface.co/hoja-solutions",
+  ],
+};
 ---
 
 <BaseLayout
   title="Hoja — AI & Software Consultancy"
-  description="Hoja designs and ships AI systems and custom software."
+  description="Hoja designs and ships AI systems and custom software, built on open-source and open-weight technologies that run on infrastructure you control."
+  image={ogImage}
+  jsonLd={org}
 >
   <div class="flex flex-col min-h-screen">
     <Navbar />

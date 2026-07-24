@@ -1,4 +1,11 @@
 ---
+const path = Astro.url.pathname;
+const onBlog = path.startsWith(`${import.meta.env.BASE_URL}blog`) || path.startsWith("/blog");
+
+const link = (active: boolean) =>
+  active
+    ? "text-sm text-surface-900 font-medium"
+    : "text-sm text-surface-600 hover:text-surface-900 transition-colors";
 ---
 
 <nav class="sticky top-0 z-50 bg-ivory/90 backdrop-blur-sm border-b border-surface-200/50">
@@ -9,14 +16,20 @@
         <span class="text-base text-surface-900 font-brand font-bold">Hoja</span>
       </a>
 
-<div class="hidden md:flex items-center gap-7">
-        <a href="/#services" class="text-sm text-surface-600 hover:text-surface-900 transition-colors">Services</a>
-        <a href="/#technologies" class="text-sm text-surface-600 hover:text-surface-900 transition-colors">Technologies</a>
-        <a href="/#contact" class="text-sm text-surface-600 hover:text-surface-900 transition-colors">Contact</a>
-        <a href="/blog" class="text-sm text-surface-600 hover:text-surface-900 transition-colors">Blog</a>
+      <div class="hidden md:flex items-center gap-7">
+        <a href="/#services" class={link(false)}>Services</a>
+        <a href="/#technologies" class={link(false)}>Technologies</a>
+        <a href="/#contact" class={link(false)}>Contact</a>
+        <a href="/blog" class={link(onBlog)} aria-current={onBlog ? "page" : undefined}>Blog</a>
       </div>
 
-      <button id="menu-btn" class="md:hidden p-2 text-surface-600 hover:text-surface-900" aria-label="Toggle menu">
+      <button
+        id="menu-btn"
+        class="md:hidden p-2 text-surface-600 hover:text-surface-900"
+        aria-label="Toggle menu"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+      >
         <svg id="menu-open" class="w-5 h-5 block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
           <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
         </svg>
@@ -26,14 +39,14 @@
       </button>
     </div>
 
-<div id="mobile-menu" class="hidden md:hidden pb-3 border-t border-surface-200/50 mt-2 pt-3">
-        <div class="flex flex-col gap-2">
-          <a href="/#services" class="text-sm text-surface-600 hover:text-surface-900 py-2">Services</a>
-          <a href="/#technologies" class="text-sm text-surface-600 hover:text-surface-900 py-2">Technologies</a>
-          <a href="/#contact" class="text-sm text-surface-600 hover:text-surface-900 py-2">Contact</a>
-          <a href="/blog" class="text-sm text-surface-600 hover:text-surface-900 py-2">Blog</a>
-        </div>
+    <div id="mobile-menu" class="hidden md:hidden pb-3 border-t border-surface-200/50 mt-2 pt-3">
+      <div class="flex flex-col gap-2">
+        <a href="/#services" class="text-sm text-surface-600 hover:text-surface-900 py-2">Services</a>
+        <a href="/#technologies" class="text-sm text-surface-600 hover:text-surface-900 py-2">Technologies</a>
+        <a href="/#contact" class="text-sm text-surface-600 hover:text-surface-900 py-2">Contact</a>
+        <a href="/blog" class={`py-2 ${link(onBlog)}`} aria-current={onBlog ? "page" : undefined}>Blog</a>
       </div>
+    </div>
   </div>
 </nav>
 
@@ -43,17 +56,25 @@
   const menuOpen = document.getElementById("menu-open");
   const menuClose = document.getElementById("menu-close");
 
+  const setOpen = (open: boolean) => {
+    mobileMenu?.classList.toggle("hidden", !open);
+    menuOpen?.classList.toggle("hidden", open);
+    menuClose?.classList.toggle("hidden", !open);
+    menuBtn?.setAttribute("aria-expanded", String(open));
+  };
+
   menuBtn?.addEventListener("click", () => {
-    mobileMenu?.classList.toggle("hidden");
-    menuOpen?.classList.toggle("hidden");
-    menuClose?.classList.toggle("hidden");
+    const open = mobileMenu?.classList.contains("hidden") ?? false;
+    setOpen(open);
   });
 
-  mobileMenu?.querySelectorAll("a").forEach((link) => {
-    link.addEventListener("click", () => {
-      mobileMenu.classList.add("hidden");
-      menuOpen?.classList.remove("hidden");
-      menuClose?.classList.add("hidden");
-    });
+  mobileMenu?.querySelectorAll("a").forEach((linkEl) => {
+    linkEl.addEventListener("click", () => setOpen(false));
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !mobileMenu?.classList.contains("hidden")) {
+      setOpen(false);
+    }
   });
 </script>

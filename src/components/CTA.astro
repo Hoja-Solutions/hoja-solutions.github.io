@@ -1,4 +1,20 @@
 ---
+// Paste the ID from your Formspree endpoint (the part after /f/).
+const FORMSPREE_ID = import.meta.env.PUBLIC_FORMSPREE_ID || "mojgklva";
+const action = `https://formspree.io/f/${FORMSPREE_ID}`;
+
+const inputClass =
+  "w-full text-sm px-3.5 py-2.5 rounded-md border border-surface-300 bg-ivory text-surface-800 placeholder:text-surface-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 transition-colors";
+
+// Illustration: a sprout whose growth becomes a paper plane's flight.
+let illo = "";
+illo += `<line x1="52" y1="254" x2="150" y2="254" stroke="#b5ada0" stroke-width="1.6"/>`;
+illo += `<path d="M 100 254 C 95 222 106 186 100 152" fill="none" stroke="#4d9622" stroke-width="2.4"/>`;
+illo += `<path d="M 100 174 C 74 172 61 153 67 141 C 82 143 99 156 100 174 Z" fill="#8fd042" stroke="#4d9622" stroke-width="1"/>`;
+illo += `<path d="M 100 152 C 126 150 139 131 133 119 C 118 121 101 134 100 152 Z" fill="#6bb82d" stroke="#4d9622" stroke-width="1"/>`;
+illo += `<path d="M 150 170 C 185 200 244 194 274 124" fill="none" stroke="#b5ada0" stroke-width="1.6" stroke-dasharray="3 6" stroke-linecap="round"/>`;
+illo += `<polygon points="346,84 280,106 306,109" fill="#d7f0a5" stroke="#4d9622" stroke-width="1.6" stroke-linejoin="round"/>`;
+illo += `<polygon points="346,84 306,109 312,140" fill="#8fd042" stroke="#4d9622" stroke-width="1.6" stroke-linejoin="round"/>`;
 ---
 
 <section id="contact" class="bg-ivory-dark border-t border-surface-200/40 pt-16 pb-20 sm:pt-20 sm:pb-24 lg:pt-24 lg:pb-28">
@@ -12,143 +28,84 @@
         <p class="mt-6 text-base text-surface-600 leading-relaxed">
           Tell us what you are building. We will get back to you within one business day and be honest about whether we can help.
         </p>
-        <div class="mt-8 flex flex-col sm:flex-row gap-3">
-          <a href="mailto:contact@hoja.solutions" class="text-sm font-medium text-white bg-brand-600 hover:bg-brand-700 px-5 py-2.5 rounded-md transition-colors text-center">
-            Email Us
-          </a>
-          <a href="https://cal.com/hoja-solutions" target="_blank" rel="noopener noreferrer" class="text-sm font-medium text-surface-700 hover:text-surface-900 px-5 py-2.5 rounded-md transition-colors border border-surface-300 hover:border-surface-400 text-center">
-            Schedule a Call
-          </a>
-        </div>
+
+        <form id="contact-form" action={action} method="POST" class="mt-8 space-y-4">
+          <div>
+            <label for="name" class="sr-only">Name</label>
+            <input id="name" name="name" type="text" required autocomplete="name" placeholder="Your name" class={inputClass} />
+          </div>
+          <div>
+            <label for="email" class="sr-only">Email</label>
+            <input id="email" name="email" type="email" required autocomplete="email" placeholder="you@company.com" class={inputClass} />
+          </div>
+          <div>
+            <label for="message" class="sr-only">Message</label>
+            <textarea id="message" name="message" required rows="4" placeholder="What are you building?" class={`${inputClass} resize-y`}></textarea>
+          </div>
+
+          <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" class="hidden" />
+          <input type="hidden" name="_subject" value="New inquiry from hoja.solutions" />
+
+          <div class="flex flex-col sm:flex-row sm:items-center gap-3 pt-1">
+            <button
+              type="submit"
+              id="submit-btn"
+              class="text-sm font-medium text-white bg-brand-600 hover:bg-brand-700 px-5 py-2.5 rounded-md transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              Send message
+            </button>
+            <a href="https://calendly.com/joseesparza/30min" target="_blank" rel="noopener noreferrer" class="text-sm text-surface-600 hover:text-surface-900 transition-colors">
+              or schedule a call
+            </a>
+          </div>
+
+          <p id="form-status" class="text-sm" role="status" aria-live="polite"></p>
+        </form>
       </div>
 
       <div class="flex justify-center lg:justify-end">
-        <div class="isometric-scene">
-          <!-- Cube 1: Small -->
-          <div class="iso-cube cube-1" style="--size: 48px;">
-            <div class="face front"></div>
-            <div class="face back"></div>
-            <div class="face right"></div>
-            <div class="face left"></div>
-            <div class="face top"></div>
-            <div class="face bottom"></div>
-          </div>
-
-          <!-- Cube 2: Medium -->
-          <div class="iso-cube cube-2" style="--size: 72px;">
-            <div class="face front"></div>
-            <div class="face back"></div>
-            <div class="face right"></div>
-            <div class="face left"></div>
-            <div class="face top"></div>
-            <div class="face bottom"></div>
-          </div>
-
-          <!-- Cube 3: Large -->
-          <div class="iso-cube cube-3" style="--size: 96px;">
-            <div class="face front"></div>
-            <div class="face back"></div>
-            <div class="face right"></div>
-            <div class="face left"></div>
-            <div class="face top"></div>
-            <div class="face bottom"></div>
-          </div>
-
-          <!-- Cube 4: Extra Large -->
-          <div class="iso-cube cube-4" style="--size: 120px;">
-            <div class="face front"></div>
-            <div class="face back"></div>
-            <div class="face right"></div>
-            <div class="face left"></div>
-            <div class="face top"></div>
-            <div class="face bottom"></div>
-          </div>
-        </div>
+        <svg viewBox="0 0 420 300" width="100%" height="100%" class="w-full max-w-md" role="img" aria-label="A sprout growing into a paper plane in flight" set:html={illo} />
       </div>
     </div>
   </div>
 </section>
 
-<style>
-  .isometric-scene {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    transform: rotateX(0deg) rotateY(0deg);
-    perspective: 800px;
-    transform-style: preserve-3d;
-    scale: 0.75;
-    transform-origin: center;
-  }
+<script>
+  const form = document.getElementById("contact-form") as HTMLFormElement | null;
+  const status = document.getElementById("form-status");
+  const btn = document.getElementById("submit-btn") as HTMLButtonElement | null;
 
-  @media (min-width: 640px) {
-    .isometric-scene {
-      scale: 0.85;
-    }
+  if (form && status && btn) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      status.textContent = "";
+      const original = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = "Sending...";
+      try {
+        const res = await fetch(form.action, {
+          method: "POST",
+          body: new FormData(form),
+          headers: { Accept: "application/json" },
+        });
+        if (res.ok) {
+          form.reset();
+          status.className = "text-sm text-brand-700";
+          status.textContent = "Thanks. We will get back to you within one business day.";
+        } else {
+          const data = await res.json().catch(() => null);
+          status.className = "text-sm text-red-600";
+          status.textContent =
+            data?.errors?.[0]?.message ??
+            "Something went wrong. Please try again, or schedule a call above.";
+        }
+      } catch {
+        status.className = "text-sm text-red-600";
+        status.textContent = "Network error. Please try again in a moment.";
+      } finally {
+        btn.disabled = false;
+        btn.textContent = original;
+      }
+    });
   }
-
-  @media (min-width: 1024px) {
-    .isometric-scene {
-      scale: 1;
-    }
-  }
-
-  .iso-cube {
-    position: relative;
-    width: var(--size);
-    height: var(--size);
-    transform-style: preserve-3d;
-    transform: rotateX(30deg) rotateY(-45deg);
-  }
-
-  .face {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border: 1.5px solid;
-    background: transparent;
-  }
-
-  .face.front  { transform: translateZ(calc(var(--size) / 2)); }
-  .face.back   { transform: translateZ(calc(var(--size) / -2)) rotateY(180deg); }
-  .face.right  { transform: rotateY(90deg) translateZ(calc(var(--size) / 2)); }
-  .face.left   { transform: rotateY(-90deg) translateZ(calc(var(--size) / 2)); }
-  .face.top    { transform: rotateX(90deg) translateZ(calc(var(--size) / 2)); }
-  .face.bottom { transform: rotateX(-90deg) translateZ(calc(var(--size) / 2)); }
-
-  .iso-cube:nth-child(1) .face {
-    border-color: var(--color-brand-500);
-  }
-
-  .iso-cube:nth-child(2) .face {
-    border-color: var(--color-brand-400);
-  }
-
-  .iso-cube:nth-child(3) .face {
-    border-color: var(--color-surface-400);
-  }
-
-  .iso-cube:nth-child(4) .face {
-    border-color: var(--color-surface-300);
-  }
-
-  /* Cube sizes and spacing */
-  .cube-1 {
-    margin-right: -10px;
-    z-index: 3;
-  }
-
-  .cube-2 {
-    margin-right: -15px;
-    z-index: 2;
-  }
-
-  .cube-3 {
-    z-index: 1;
-  }
-
-  .cube-4 {
-    z-index: 0;
-  }
-</style>
+</script>

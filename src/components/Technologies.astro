@@ -31,47 +31,24 @@ const technologies = [
         Our technology stack
       </h2>
       <p class="mt-4 text-base text-surface-600 leading-relaxed">
-        We build on platforms that scale with your data. The stack prioritizes open-source models, vector search, and production-grade orchestration. You get the flexibility of open source with the reliability of cloud infrastructure.
+        We build on open-source models, vector search, and orchestration that holds up in production. You can own and change the stack, and run it on infrastructure you control.
       </p>
     </div>
 
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-8">
       {technologies.map((tech) => (
-        <div class="flex flex-col items-center text-center gap-2 tech-item">
-          <div class="tech-icon w-8 h-8 relative">
-            <img
-              src={tech.logo ?? `https://cdn.simpleicons.org/${tech.slug}`}
-              alt={tech.name}
-              class="w-8 h-8 object-contain transition-opacity duration-300"
-              style="filter: grayscale(1) brightness(0.4); position: absolute; top: 0; left: 0;"
-            />
-            <img
-              src={tech.logo ?? `https://cdn.simpleicons.org/${tech.slug}`}
-              alt={tech.name}
-              class="w-8 h-8 object-contain transition-opacity duration-300 tech-color"
-              style="position: absolute; top: 0; left: 0; opacity: 0;"
-            />
-          </div>
+        <div class="flex flex-col items-center text-center gap-2 group">
+          <img
+            src={tech.logo ?? `/logos/${tech.slug}.svg`}
+            alt={tech.name}
+            width="32"
+            height="32"
+            loading="lazy"
+            class="w-8 h-8 object-contain grayscale opacity-70 transition duration-300 group-hover:grayscale-0 group-hover:opacity-100"
+          />
           <p class="text-sm font-semibold text-surface-900">{tech.name}</p>
         </div>
       ))}
     </div>
   </div>
 </section>
-
-<script is:inline>
-  document.querySelectorAll(".tech-item").forEach((item) => {
-    const colorImg = item.querySelector(".tech-color");
-    const grayImg = item.querySelector(".tech-icon img:first-child");
-
-    item.addEventListener("mouseenter", () => {
-      grayImg.style.opacity = "0";
-      colorImg.style.opacity = "1";
-    });
-
-    item.addEventListener("mouseleave", () => {
-      grayImg.style.opacity = "1";
-      colorImg.style.opacity = "0";
-    });
-  });
-</script>
