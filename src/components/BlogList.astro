@@ -1,0 +1,178 @@
+---
+import { readingTime, tagSlug, type Post } from "../lib/posts";
+import { generatePortrait } from "../lib/portrait";
+
+interface Props {
+  posts: Post[];
+}
+const { posts } = Astro.props;
+---
+
+<div class="divide-y divide-surface-200/60" id="post-list">
+  {
+    posts.map((post, i) => {
+      const { points, lines } = generatePortrait(post.body);
+      const rt = readingTime(post.body);
+      const search = `${post.data.title} ${post.data.description} ${(post.data.tags ?? []).join(" ")}`.toLowerCase();
+      return (
+        <article
+          class="post-item flex gap-4 py-5"
+          data-search={search}
+          style={i < 10 ? "display: flex;" : "display: none;"}
+        >
+          <a
+            href={`/blog/${post.id}`}
+            class="hidden sm:block shrink-0 w-28 h-16 rounded-md overflow-hidden border border-surface-200 bg-ivory-dark"
+            aria-hidden="true"
+            tabindex="-1"
+          >
+            <svg
+              viewBox="0 0 300 100"
+              preserveAspectRatio="none"
+              width="100%"
+              height="100%"
+            >
+              {lines.map((l) => (
+                <line
+                  x1={`${points[l.a].x}%`}
+                  y1={`${points[l.a].y}%`}
+                  x2={`${points[l.b].x}%`}
+                  y2={`${points[l.b].y}%`}
+                  stroke={l.color}
+                  stroke-width="0.6"
+                  stroke-opacity={l.opacity}
+                />
+              ))}
+              {points.map((p) => (
+                <circle cx={`${p.x}%`} cy={`${p.y}%`} r="1.6" fill={p.color} />
+              ))}
+            </svg>
+          </a>
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center gap-2 mb-1 text-xs text-surface-500">
+              <time class="font-brand tabular-nums whitespace-nowrap">
+                {post.data.date.toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                  timeZone: "UTC",
+                })}
+              </time>
+              <span aria-hidden="true">·</span>
+              <span class="whitespace-nowrap">{rt} min read</span>
+            </div>
+            <h2 class="text-base font-medium text-surface-900 mb-1">
+              <a
+                href={`/blog/${post.id}`}
+                class="hover:text-brand-600 transition-colors"
+              >
+                {post.data.title}
+              </a>
+            </h2>
+            <p class="text-sm text-surface-600 leading-relaxed">
+              {post.data.description}
+            </p>
+            {post.data.tags?.length && (
+              <div class="mt-2 flex flex-wrap gap-1.5">
+                {post.data.tags.map((t) => (
+                  <a
+                    href={`/blog/tag/${tagSlug(t)}`}
+                    class="text-[11px] text-surface-500 hover:text-brand-600 hover:border-brand-500 border border-surface-200 rounded-full px-2 py-0.5 transition-colors"
+                  >
+                    {t}
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        </article>
+      );
+    })
+  }
+</div>
+
+<p id="no-results" class="text-sm text-surface-500" style="display: none;">
+  No posts match your search.
+</p>
+
+<div id="pager" class="flex items-center gap-3 mt-8" style="display: none;">
+  <button
+    id="prev"
+    class="text-xs font-medium px-3 py-1.5 rounded-md border border-surface-300 text-surface-600 hover:border-brand-500 hover:text-brand-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+  >
+    Previous
+  </button>
+  <span id="page-label" class="text-xs text-surface-500 tabular-nums"></span>
+  <button
+    id="next"
+    class="text-xs font-medium px-3 py-1.5 rounded-md border border-surface-300 text-surface-600 hover:border-brand-500 hover:text-brand-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+  >
+    Next
+  </button>
+</div>
+
+<script>
+  const PER_PAGE = 10;
+  const posts = Array.from(document.querySelectorAll<HTMLElement>(".post-item"));
+
+  if (posts.length) {
+    const searchInput = document.getElementById("search") as HTMLInputElement | null;
+    const noResults = document.getElementById("no-results") as HTMLElement | null;
+    const pager = document.getElementById("pager") as HTMLElement | null;
+    const prevBtn = document.getElementById("prev") as HTMLButtonElement | null;
+    const nextBtn = document.getElementById("next") as HTMLButtonElement | null;
+    const pageLabel = document.getElementById("page-label") as HTMLElement | null;
+
+    const params = new URLSearchParams(location.search);
+    let query = (params.get("q") ?? "").toLowerCase();
+    let page = Math.max(1, parseInt(params.get("page") ?? "1", 10) || 1);
+    if (searchInput && query) searchInput.value = query;
+
+    const syncUrl = () => {
+      const p = new URLSearchParams();
+      if (query) p.set("q", query);
+      if (page > 1) p.set("page", String(page));
+      const qs = p.toString();
+      history.replaceState(null, "", qs ? `?${qs}` : location.pathname);
+    };
+
+    const render = () => {
+      const shown = posts.filter(
+        (post) => !query || (post.dataset.search ?? "").includes(query),
+      );
+      const pages = Math.max(1, Math.ceil(shown.length / PER_PAGE));
+      page = Math.min(Math.max(1, page), pages);
+      const start = (page - 1) * PER_PAGE;
+
+      posts.forEach((post) => (post.style.display = "none"));
+      shown
+        .slice(start, start + PER_PAGE)
+        .forEach((post) => (post.style.display = "flex"));
+
+      if (noResults)
+        noResults.style.display =
+          posts.length && !shown.length ? "block" : "none";
+      if (pager) pager.style.display = pages > 1 ? "flex" : "none";
+      if (pageLabel) pageLabel.textContent = `Page ${page} of ${pages}`;
+      if (prevBtn) prevBtn.disabled = page === 1;
+      if (nextBtn) nextBtn.disabled = page === pages;
+      syncUrl();
+    };
+
+    searchInput?.addEventListener("input", () => {
+      query = searchInput.value.trim().toLowerCase();
+      page = 1;
+      render();
+    });
+    prevBtn?.addEventListener("click", () => {
+      page -= 1;
+      render();
+    });
+    nextBtn?.addEventListener("click", () => {
+      page += 1;
+      render();
+    });
+
+    render();
+  }
+</script>

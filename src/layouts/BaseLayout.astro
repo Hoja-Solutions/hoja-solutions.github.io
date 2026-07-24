@@ -8,7 +8,8 @@ type Props = {
   children: AstroComponent;
 };
 
-const { title, description, children } = Astro.props;
+const { title, description } = Astro.props;
+const rssHref = `${import.meta.env.BASE_URL}rss.xml`;
 ---
 
 <!doctype html>
@@ -17,6 +18,12 @@ const { title, description, children } = Astro.props;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Hoja Blog"
+      href={rssHref}
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

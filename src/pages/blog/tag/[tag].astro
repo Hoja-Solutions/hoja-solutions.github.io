@@ -1,0 +1,51 @@
+---
+import BlogLayout from "../../../layouts/BlogLayout.astro";
+import Navbar from "../../../components/Navbar.astro";
+import Footer from "../../../components/Footer.astro";
+import BlogList from "../../../components/BlogList.astro";
+import { getPosts, allTags, tagSlug } from "../../../lib/posts";
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return allTags(posts).map((tag) => ({
+    params: { tag: tagSlug(tag) },
+    props: {
+      tag,
+      posts: posts.filter((p) => (p.data.tags ?? []).includes(tag)),
+    },
+  }));
+}
+
+const { tag, posts } = Astro.props;
+---
+
+<BlogLayout
+  title={`Tagged ${tag} — Hoja`}
+  description={`Hoja blog posts tagged ${tag}.`}
+>
+  <div class="flex flex-col min-h-screen">
+    <Navbar />
+    <main class="flex-1">
+      <section class="bg-ivory pt-16 pb-8 sm:pt-20">
+        <div class="max-w-3xl mx-auto px-6 lg:px-8">
+          <a href="/blog" class="text-xs text-brand-600 hover:text-brand-700 font-medium">
+            ← All posts
+          </a>
+          <h1 class="mt-3 text-2xl sm:text-3xl font-semibold text-surface-900 tracking-tight">
+            Tagged <span class="text-brand-600">{tag}</span>
+          </h1>
+          <p class="mt-2 text-sm text-surface-500">
+            {posts.length} post{posts.length === 1 ? "" : "s"}
+          </p>
+        </div>
+      </section>
+
+      <section class="bg-ivory pb-20 sm:pb-24">
+        <div class="max-w-3xl mx-auto px-6 lg:px-8">
+          <BlogList posts={posts} />
+        </div>
+      </section>
+    </main>
+    <Footer />
+  </div>
+</BlogLayout>

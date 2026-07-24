@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://hoja-solutions.github.io/sitemap-index.xml

@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
+import sitemap from "@astrojs/sitemap";
 
 /** @type {import('astro').AstroUserConfig} */
 export default defineConfig({
@@ -8,6 +9,10 @@ export default defineConfig({
   // (not `??`) falls back correctly and avoids Astro's "Invalid URL" on site: "".
   site: process.env.PUBLIC_SITE || undefined,
   base: process.env.PUBLIC_BASE || "/",
+  integrations: [sitemap()],
+  markdown: {
+    shikiConfig: { theme: "github-dark", wrap: false },
+  },
   vite: {
     plugins: [tailwindcss()],
   },

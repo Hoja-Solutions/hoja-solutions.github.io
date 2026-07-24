@@ -2,25 +2,21 @@
 import BlogLayout from "../../layouts/BlogLayout.astro";
 import Navbar from "../../components/Navbar.astro";
 import Footer from "../../components/Footer.astro";
-import { getCollection } from "astro:content";
+import BlogList from "../../components/BlogList.astro";
+import { getPosts, allTags, tagSlug } from "../../lib/posts";
 
-const posts = await getCollection("blog");
-
-const sorted = posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-
-// Collect all unique tags from all posts
-const allTags = [...new Set(posts.flatMap((p) => p.data.tags ?? []))].sort();
+const posts = await getPosts();
+const tags = allTags(posts);
 ---
 
 <BlogLayout
   title="Blog — Hoja"
   description="Technical write-ups from Hoja: open-source tools, model choices, and the engineering decisions behind our projects."
-  date={new Date()}
 >
   <div class="flex flex-col min-h-screen">
     <Navbar />
     <main class="flex-1">
-      <section class="bg-ivory pt-16 pb-20 sm:pt-20 sm:pb-24">
+      <section class="bg-ivory pt-16 pb-8 sm:pt-20">
         <div class="max-w-3xl mx-auto px-6 lg:px-8">
           <p class="text-xs font-medium text-brand-600 uppercase tracking-wider mb-3">Blog</p>
           <h1 class="text-2xl sm:text-3xl font-semibold text-surface-900 tracking-tight">
@@ -38,21 +34,15 @@ const allTags = [...new Set(posts.flatMap((p) => p.data.tags ?? []))].sort();
               class="w-full max-w-md text-sm px-3.5 py-2 rounded-md border border-surface-300 bg-surface-50 text-surface-800 placeholder:text-surface-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 transition-colors"
             />
           </div>
-          {allTags.length > 0 && (
-            <div class="flex flex-wrap gap-2 mt-4" id="tag-filters">
-              <button
-                class="tag-filter text-xs font-medium px-3 py-1.5 rounded-full border border-surface-300 text-surface-600 hover:border-brand-500 hover:text-brand-600 transition-colors"
-                data-tag="all"
-              >
-                All
-              </button>
-              {allTags.map((tag) => (
-                <button
-                  class="tag-filter text-xs font-medium px-3 py-1.5 rounded-full border border-surface-300 text-surface-600 hover:border-brand-500 hover:text-brand-600 transition-colors"
-                  data-tag={tag}
+          {tags.length > 0 && (
+            <div class="flex flex-wrap gap-2 mt-4">
+              {tags.map((tag) => (
+                <a
+                  href={`/blog/tag/${tagSlug(tag)}`}
+                  class="text-xs font-medium px-3 py-1.5 rounded-full border border-surface-300 text-surface-600 hover:border-brand-500 hover:text-brand-600 transition-colors"
                 >
                   {tag}
-                </button>
+                </a>
               ))}
             </div>
           )}
@@ -61,140 +51,14 @@ const allTags = [...new Set(posts.flatMap((p) => p.data.tags ?? []))].sort();
 
       <section class="bg-ivory pb-20 sm:pb-24">
         <div class="max-w-3xl mx-auto px-6 lg:px-8">
-          {sorted.length === 0 ? (
+          {posts.length === 0 ? (
             <p class="text-sm text-surface-500">No posts yet.</p>
           ) : (
-            <div class="divide-y divide-surface-200/60" id="post-list">
-              {sorted.map((post) => (
-                <article
-                  class="post-item flex flex-col py-5"
-                  data-tags={JSON.stringify(post.data.tags ?? [])}
-                  data-search={`${post.data.title} ${post.data.description} ${(post.data.tags ?? []).join(" ")}`.toLowerCase()}
-                >
-                  <div class="flex items-baseline gap-3 mb-1">
-                    <time class="text-xs text-surface-500 font-brand tabular-nums whitespace-nowrap">
-                      {post.data.date.toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                        timeZone: "UTC",
-                      })}
-                    </time>
-                    {post.data.tags?.length && (
-                      <span class="text-xs text-surface-500">
-                        {post.data.tags.join(", ")}
-                      </span>
-                    )}
-                  </div>
-                  <h2 class="text-base font-medium text-surface-900 mb-1">
-                    <a href={`/blog/${post.id}`} class="hover:text-brand-600 transition-colors">
-                      {post.data.title}
-                    </a>
-                  </h2>
-                  <p class="text-sm text-surface-600 leading-relaxed">
-                    {post.data.description}
-                  </p>
-                </article>
-              ))}
-            </div>
+            <BlogList posts={posts} />
           )}
-
-          <p id="no-results" class="text-sm text-surface-500" style="display: none;">
-            No posts match your search.
-          </p>
-
-          <div id="pager" class="flex items-center gap-3 mt-8" style="display: none;">
-            <button
-              id="prev"
-              class="text-xs font-medium px-3 py-1.5 rounded-md border border-surface-300 text-surface-600 hover:border-brand-500 hover:text-brand-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-            >
-              Previous
-            </button>
-            <span id="page-label" class="text-xs text-surface-500 tabular-nums"></span>
-            <button
-              id="next"
-              class="text-xs font-medium px-3 py-1.5 rounded-md border border-surface-300 text-surface-600 hover:border-brand-500 hover:text-brand-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-            >
-              Next
-            </button>
-          </div>
         </div>
       </section>
     </main>
     <Footer />
   </div>
 </BlogLayout>
-
-<script>
-  const PER_PAGE = 10;
-
-  const searchInput = document.getElementById("search") as HTMLInputElement;
-  const tagButtons = document.querySelectorAll<HTMLButtonElement>(".tag-filter");
-  const posts = Array.from(document.querySelectorAll<HTMLElement>(".post-item"));
-  const noResults = document.getElementById("no-results") as HTMLElement;
-  const pager = document.getElementById("pager") as HTMLElement;
-  const prevBtn = document.getElementById("prev") as HTMLButtonElement;
-  const nextBtn = document.getElementById("next") as HTMLButtonElement;
-  const pageLabel = document.getElementById("page-label") as HTMLElement;
-
-  // The list reacts to three things: the search text, the active tag, and the
-  // current page. One render() reads all three and decides what to show.
-  let query = "";
-  let activeTag = "all";
-  let page = 1;
-
-  const matches = (post: HTMLElement) => {
-    const inTag =
-      activeTag === "all" ||
-      JSON.parse(post.dataset.tags ?? "[]").includes(activeTag);
-    const inSearch = query === "" || (post.dataset.search ?? "").includes(query);
-    return inTag && inSearch;
-  };
-
-  const render = () => {
-    const shown = posts.filter(matches);
-    const pages = Math.max(1, Math.ceil(shown.length / PER_PAGE));
-    page = Math.min(Math.max(1, page), pages);
-    const start = (page - 1) * PER_PAGE;
-
-    posts.forEach((post) => (post.style.display = "none"));
-    shown
-      .slice(start, start + PER_PAGE)
-      .forEach((post) => (post.style.display = "flex"));
-
-    noResults.style.display = posts.length && !shown.length ? "block" : "none";
-    pager.style.display = pages > 1 ? "flex" : "none";
-    pageLabel.textContent = `Page ${page} of ${pages}`;
-    prevBtn.disabled = page === 1;
-    nextBtn.disabled = page === pages;
-  };
-
-  searchInput.addEventListener("input", () => {
-    query = searchInput.value.trim().toLowerCase();
-    page = 1;
-    render();
-  });
-
-  tagButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      activeTag = button.dataset.tag ?? "all";
-      page = 1;
-      tagButtons.forEach((b) =>
-        b.classList.remove("border-brand-500", "bg-brand-50", "text-brand-700"),
-      );
-      button.classList.add("border-brand-500", "bg-brand-50", "text-brand-700");
-      render();
-    });
-  });
-
-  prevBtn.addEventListener("click", () => {
-    page -= 1;
-    render();
-  });
-  nextBtn.addEventListener("click", () => {
-    page += 1;
-    render();
-  });
-
-  render();
-</script>

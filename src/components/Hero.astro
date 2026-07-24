@@ -69,12 +69,20 @@
       draw(x2, y2, a + 0.46, len * 0.7, width * 0.7, depth - 1);
     };
 
-    const frame = () => {
-      t += 0.012;
+    const paint = () => {
       ctx.clearRect(0, 0, W, H);
       draw(W / 2, H * 0.96, -Math.PI / 2, 74, 5, 8);
-      requestAnimationFrame(frame);
     };
-    frame();
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      paint();
+    } else {
+      const frame = () => {
+        t += 0.012;
+        paint();
+        requestAnimationFrame(frame);
+      };
+      frame();
+    }
   }
 </script>

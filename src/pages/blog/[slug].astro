@@ -2,28 +2,61 @@
 import BlogLayout from "../../layouts/BlogLayout.astro";
 import Navbar from "../../components/Navbar.astro";
 import Footer from "../../components/Footer.astro";
-import { getCollection, render } from "astro:content";
+import { render } from "astro:content";
 import { generatePortrait } from "../../lib/portrait";
+import { getPosts, readingTime, tagSlug } from "../../lib/posts";
 
 export async function getStaticPaths() {
-  const posts = await getCollection("blog");
-  return posts.map((post) => ({
+  const posts = await getPosts();
+  return posts.map((post, i) => ({
     params: { slug: post.id },
-    props: { post },
+    props: {
+      post,
+      older: posts[i + 1] ?? null,
+      newer: posts[i - 1] ?? null,
+      related: posts
+        .filter(
+          (p) =>
+            p.id !== post.id &&
+            (p.data.tags ?? []).some((t) =>
+              (post.data.tags ?? []).includes(t),
+            ),
+        )
+        .slice(0, 3),
+    },
   }));
 }
 
-const { post } = Astro.props;
-const { Content } = await render(post);
+const { post, older, newer, related } = Astro.props;
+const { Content, headings } = await render(post);
+const toc = headings.filter((h) => h.depth === 2);
+const rt = readingTime(post.body);
 
 // Deterministic constellation illustration, shared with the Open Graph image.
 const { points, lines } = generatePortrait(post.body);
 
-// Absolute URL to the generated preview image for social cards.
 const base = import.meta.env.BASE_URL;
 const ogImage = Astro.site
   ? new URL(`${base}og/${post.id}.png`, Astro.site).href
   : undefined;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: post.data.date.toISOString(),
+  dateModified: (post.data.updated ?? post.data.date).toISOString(),
+  author: { "@type": "Organization", name: "Hoja" },
+  publisher: { "@type": "Organization", name: "Hoja" },
+  keywords: (post.data.tags ?? []).join(", "),
+  ...(ogImage ? { image: ogImage } : {}),
+  ...(Astro.site
+    ? { mainEntityOfPage: new URL(`${base}blog/${post.id}/`, Astro.site).href }
+    : {}),
+};
+
+const dateFmt = { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" } as const;
 ---
 
 <BlogLayout
@@ -31,6 +64,8 @@ const ogImage = Astro.site
   description={post.data.description}
   date={post.data.date}
   image={ogImage}
+  ogType="article"
+  jsonLd={jsonLd}
 >
   <div class="flex flex-col min-h-screen">
     <Navbar />
@@ -41,7 +76,6 @@ const ogImage = Astro.site
             <a href="/blog" class="text-xs text-brand-600 hover:text-brand-700 font-medium">
               ← Back to blog
             </a>
-            <!-- Portrait Illustration -->
             <div class="illustration-container mt-3 mb-4">
               <svg viewBox="0 0 300 100" class="illustration-svg" preserveAspectRatio="none" width="100%" height="100%">
                 {lines.map((l) => (
@@ -56,29 +90,88 @@ const ogImage = Astro.site
             <h1 class="text-2xl sm:text-3xl font-semibold text-surface-900 tracking-tight">
               {post.data.title}
             </h1>
-            <div class="flex items-baseline gap-3 mt-3">
-              <time class="text-xs text-surface-500 font-brand tabular-nums">
-                {post.data.date.toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                  timeZone: "UTC",
-                })}
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-3 text-xs text-surface-500">
+              <time class="font-brand tabular-nums">
+                {post.data.date.toLocaleDateString("en-US", dateFmt)}
               </time>
-              {post.data.tags?.length && (
-                <span class="text-xs text-surface-400">
-                  · {post.data.tags.join(", ")}
-                </span>
+              <span aria-hidden="true">·</span>
+              <span>{rt} min read</span>
+              {post.data.updated && (
+                <Fragment>
+                  <span aria-hidden="true">·</span>
+                  <span>Updated {post.data.updated.toLocaleDateString("en-US", dateFmt)}</span>
+                </Fragment>
               )}
             </div>
-            <p class="text-sm text-surface-500 leading-relaxed mt-3 border-l-2 border-brand-500 pl-3">
+            {post.data.tags?.length && (
+              <div class="mt-3 flex flex-wrap gap-1.5">
+                {post.data.tags.map((t) => (
+                  <a href={`/blog/tag/${tagSlug(t)}`} class="text-[11px] text-surface-500 hover:text-brand-600 hover:border-brand-500 border border-surface-200 rounded-full px-2 py-0.5 transition-colors">
+                    {t}
+                  </a>
+                ))}
+              </div>
+            )}
+            <p class="text-sm text-surface-500 leading-relaxed mt-4 border-l-2 border-brand-500 pl-3">
               {post.data.description}
             </p>
           </div>
 
-<div class="prose">
+          {toc.length >= 3 && (
+            <nav class="mb-8 rounded-md border border-surface-200 bg-surface-50 p-4" aria-label="Table of contents">
+              <p class="text-xs font-medium uppercase tracking-wider text-surface-500 mb-2">On this page</p>
+              <ul class="space-y-1">
+                {toc.map((h) => (
+                  <li>
+                    <a href={`#${h.slug}`} class="text-sm text-surface-600 hover:text-brand-600 transition-colors">
+                      {h.text}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
+
+          <div class="prose">
             <Content />
           </div>
+
+          {related.length > 0 && (
+            <div class="mt-12 pt-8 border-t border-surface-200">
+              <p class="text-xs font-medium uppercase tracking-wider text-surface-500 mb-4">Related posts</p>
+              <ul class="space-y-3">
+                {related.map((p) => (
+                  <li>
+                    <a href={`/blog/${p.id}`} class="text-sm font-medium text-surface-900 hover:text-brand-600 transition-colors">
+                      {p.data.title}
+                    </a>
+                    <p class="text-xs text-surface-500 mt-0.5">{p.data.description}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {(older || newer) && (
+            <nav class="mt-12 pt-8 border-t border-surface-200 flex justify-between gap-4 text-sm" aria-label="Post navigation">
+              <div class="flex-1">
+                {older && (
+                  <a href={`/blog/${older.id}`} class="group inline-block">
+                    <span class="block text-xs text-surface-400">Older post</span>
+                    <span class="text-surface-700 group-hover:text-brand-600 transition-colors">{older.data.title}</span>
+                  </a>
+                )}
+              </div>
+              <div class="flex-1 text-right">
+                {newer && (
+                  <a href={`/blog/${newer.id}`} class="group inline-block">
+                    <span class="block text-xs text-surface-400">Newer post</span>
+                    <span class="text-surface-700 group-hover:text-brand-600 transition-colors">{newer.data.title}</span>
+                  </a>
+                )}
+              </div>
+            </nav>
+          )}
         </div>
       </article>
     </main>
@@ -95,7 +188,6 @@ const ogImage = Astro.site
     overflow: hidden;
     border: 1px solid var(--color-surface-200);
   }
-
   .illustration-svg {
     width: 100%;
     height: 100%;
