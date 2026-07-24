@@ -1,11 +1,11 @@
 import rss from "@astrojs/rss";
 import type { APIContext } from "astro";
-import { getPosts, slugOf } from "../lib/posts";
-import { getUi } from "../i18n/ui";
+import { getPosts, slugOf } from "../../lib/posts";
+import { getUi } from "../../i18n/ui";
 
 export async function GET(context: APIContext) {
-  const t = getUi("en");
-  const posts = await getPosts("en");
+  const t = getUi("es");
+  const posts = await getPosts("es");
   return rss({
     title: t.blog.rssTitle,
     description: t.blog.rssDescription,
@@ -14,7 +14,7 @@ export async function GET(context: APIContext) {
       title: post.data.title,
       description: post.data.description,
       pubDate: post.data.date,
-      link: `/blog/${slugOf(post)}/`,
+      link: `/es/blog/${slugOf(post)}/`,
       categories: post.data.tags ?? [],
     })),
   });

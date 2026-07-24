@@ -1,6 +1,19 @@
 ---
+import LanguageSwitcher from "./LanguageSwitcher.astro";
+import { getUi, type Lang } from "../i18n/ui";
+
+interface Props {
+  lang?: Lang;
+  alt?: string;
+}
+const { lang = "en", alt } = Astro.props;
+const t = getUi(lang);
+
+const base = import.meta.env.BASE_URL;
+const home = lang === "es" ? `${base}es/` : base;
+const blog = `${home}blog`;
 const path = Astro.url.pathname;
-const onBlog = path.startsWith(`${import.meta.env.BASE_URL}blog`) || path.startsWith("/blog");
+const onBlog = path.startsWith(`${base}blog`) || path.startsWith(`${base}es/blog`);
 
 const link = (active: boolean) =>
   active
@@ -11,22 +24,23 @@ const link = (active: boolean) =>
 <nav class="sticky top-0 z-50 bg-ivory/90 backdrop-blur-sm border-b border-surface-200/50">
   <div class="max-w-7xl mx-auto px-6 lg:px-8">
     <div class="flex items-center justify-between h-14">
-      <a href="/" class="flex items-center gap-2">
+      <a href={home} class="flex items-center gap-2">
         <img src="/favicon.svg" class="w-7 h-7" alt="Hoja" />
         <span class="text-base text-surface-900 font-brand font-bold">Hoja</span>
       </a>
 
       <div class="hidden md:flex items-center gap-7">
-        <a href="/#services" class={link(false)}>Services</a>
-        <a href="/#technologies" class={link(false)}>Technologies</a>
-        <a href="/#contact" class={link(false)}>Contact</a>
-        <a href="/blog" class={link(onBlog)} aria-current={onBlog ? "page" : undefined}>Blog</a>
+        <a href={`${home}#services`} class={link(false)}>{t.nav.services}</a>
+        <a href={`${home}#technologies`} class={link(false)}>{t.nav.technologies}</a>
+        <a href={`${home}#contact`} class={link(false)}>{t.nav.contact}</a>
+        <a href={blog} class={link(onBlog)} aria-current={onBlog ? "page" : undefined}>{t.nav.blog}</a>
+        {alt && <LanguageSwitcher lang={lang} alt={alt} />}
       </div>
 
       <button
         id="menu-btn"
         class="md:hidden p-2 text-surface-600 hover:text-surface-900"
-        aria-label="Toggle menu"
+        aria-label={t.nav.menu}
         aria-expanded="false"
         aria-controls="mobile-menu"
       >
@@ -41,10 +55,11 @@ const link = (active: boolean) =>
 
     <div id="mobile-menu" class="hidden md:hidden pb-3 border-t border-surface-200/50 mt-2 pt-3">
       <div class="flex flex-col gap-2">
-        <a href="/#services" class="text-sm text-surface-600 hover:text-surface-900 py-2">Services</a>
-        <a href="/#technologies" class="text-sm text-surface-600 hover:text-surface-900 py-2">Technologies</a>
-        <a href="/#contact" class="text-sm text-surface-600 hover:text-surface-900 py-2">Contact</a>
-        <a href="/blog" class={`py-2 ${link(onBlog)}`} aria-current={onBlog ? "page" : undefined}>Blog</a>
+        <a href={`${home}#services`} class="text-sm text-surface-600 hover:text-surface-900 py-2">{t.nav.services}</a>
+        <a href={`${home}#technologies`} class="text-sm text-surface-600 hover:text-surface-900 py-2">{t.nav.technologies}</a>
+        <a href={`${home}#contact`} class="text-sm text-surface-600 hover:text-surface-900 py-2">{t.nav.contact}</a>
+        <a href={blog} class={`py-2 ${link(onBlog)}`} aria-current={onBlog ? "page" : undefined}>{t.nav.blog}</a>
+        {alt && <div class="pt-2"><LanguageSwitcher lang={lang} alt={alt} /></div>}
       </div>
     </div>
   </div>
@@ -64,17 +79,12 @@ const link = (active: boolean) =>
   };
 
   menuBtn?.addEventListener("click", () => {
-    const open = mobileMenu?.classList.contains("hidden") ?? false;
-    setOpen(open);
+    setOpen(mobileMenu?.classList.contains("hidden") ?? false);
   });
-
   mobileMenu?.querySelectorAll("a").forEach((linkEl) => {
     linkEl.addEventListener("click", () => setOpen(false));
   });
-
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && !mobileMenu?.classList.contains("hidden")) {
-      setOpen(false);
-    }
+    if (e.key === "Escape" && !mobileMenu?.classList.contains("hidden")) setOpen(false);
   });
 </script>

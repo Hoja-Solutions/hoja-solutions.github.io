@@ -1,5 +1,12 @@
 ---
-// Paste the ID from your Formspree endpoint (the part after /f/).
+import { getUi, type Lang } from "../i18n/ui";
+
+interface Props {
+  lang?: Lang;
+}
+const { lang = "en" } = Astro.props;
+const t = getUi(lang);
+
 const FORMSPREE_ID = import.meta.env.PUBLIC_FORMSPREE_ID || "mojgklva";
 const action = `https://formspree.io/f/${FORMSPREE_ID}`;
 
@@ -21,30 +28,39 @@ illo += `<polygon points="346,84 306,109 312,140" fill="#8fd042" stroke="#4d9622
   <div class="max-w-7xl mx-auto px-6 lg:px-8">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
       <div>
-        <p class="text-xs font-medium text-brand-600 uppercase tracking-wider mb-3">Contact</p>
+        <p class="text-xs font-medium text-brand-600 uppercase tracking-wider mb-3">{t.contact.eyebrow}</p>
         <h2 class="text-2xl sm:text-3xl font-semibold text-surface-900 tracking-tight">
-          Tell us about your project
+          {t.contact.title}
         </h2>
         <p class="mt-6 text-base text-surface-600 leading-relaxed">
-          Tell us what you are building. We will get back to you within one business day and be honest about whether we can help.
+          {t.contact.body}
         </p>
 
-        <form id="contact-form" action={action} method="POST" class="mt-8 space-y-4">
+        <form
+          id="contact-form"
+          action={action}
+          method="POST"
+          class="mt-8 space-y-4"
+          data-ok={t.contact.success}
+          data-err={t.contact.error}
+          data-net={t.contact.network}
+          data-sending={t.contact.sending}
+        >
           <div>
-            <label for="name" class="sr-only">Name</label>
-            <input id="name" name="name" type="text" required autocomplete="name" placeholder="Your name" class={inputClass} />
+            <label for="name" class="sr-only">{t.contact.name}</label>
+            <input id="name" name="name" type="text" required autocomplete="name" placeholder={t.contact.name} class={inputClass} />
           </div>
           <div>
             <label for="email" class="sr-only">Email</label>
-            <input id="email" name="email" type="email" required autocomplete="email" placeholder="you@company.com" class={inputClass} />
+            <input id="email" name="email" type="email" required autocomplete="email" placeholder={t.contact.email} class={inputClass} />
           </div>
           <div>
-            <label for="message" class="sr-only">Message</label>
-            <textarea id="message" name="message" required rows="4" placeholder="What are you building?" class={`${inputClass} resize-y`}></textarea>
+            <label for="message" class="sr-only">{t.contact.message}</label>
+            <textarea id="message" name="message" required rows="4" placeholder={t.contact.message} class={`${inputClass} resize-y`}></textarea>
           </div>
 
           <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" class="hidden" />
-          <input type="hidden" name="_subject" value="New inquiry from hoja.solutions" />
+          <input type="hidden" name="_subject" value={t.contact.subject} />
 
           <div class="flex flex-col sm:flex-row sm:items-center gap-3 pt-1">
             <button
@@ -52,10 +68,10 @@ illo += `<polygon points="346,84 306,109 312,140" fill="#8fd042" stroke="#4d9622
               id="submit-btn"
               class="text-sm font-medium text-white bg-brand-600 hover:bg-brand-700 px-5 py-2.5 rounded-md transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Send message
+              {t.contact.send}
             </button>
             <a href="https://calendly.com/joseesparza/30min" target="_blank" rel="noopener noreferrer" class="text-sm text-surface-600 hover:text-surface-900 transition-colors">
-              or schedule a call
+              {t.contact.orCall}
             </a>
           </div>
 
@@ -76,12 +92,13 @@ illo += `<polygon points="346,84 306,109 312,140" fill="#8fd042" stroke="#4d9622
   const btn = document.getElementById("submit-btn") as HTMLButtonElement | null;
 
   if (form && status && btn) {
+    const d = form.dataset;
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       status.textContent = "";
       const original = btn.textContent;
       btn.disabled = true;
-      btn.textContent = "Sending...";
+      btn.textContent = d.sending ?? "Sending...";
       try {
         const res = await fetch(form.action, {
           method: "POST",
@@ -91,17 +108,14 @@ illo += `<polygon points="346,84 306,109 312,140" fill="#8fd042" stroke="#4d9622
         if (res.ok) {
           form.reset();
           status.className = "text-sm text-brand-700";
-          status.textContent = "Thanks. We will get back to you within one business day.";
+          status.textContent = d.ok ?? "";
         } else {
-          const data = await res.json().catch(() => null);
           status.className = "text-sm text-red-600";
-          status.textContent =
-            data?.errors?.[0]?.message ??
-            "Something went wrong. Please try again, or schedule a call above.";
+          status.textContent = d.err ?? "";
         }
       } catch {
         status.className = "text-sm text-red-600";
-        status.textContent = "Network error. Please try again in a moment.";
+        status.textContent = d.net ?? "";
       } finally {
         btn.disabled = false;
         btn.textContent = original;

@@ -1,0 +1,36 @@
+---
+import { getUi, type Lang } from "../i18n/ui";
+interface Props {
+  lang: Lang;
+  alt: string;
+}
+const { lang, alt } = Astro.props;
+const other: Lang = lang === "en" ? "es" : "en";
+const t = getUi(lang);
+---
+
+<div class="flex items-center gap-1 text-xs font-brand">
+  <span class="text-surface-900 font-bold">{lang.toUpperCase()}</span>
+  <span class="text-surface-300" aria-hidden="true">/</span>
+  <a
+    href={alt}
+    data-set-lang={other}
+    class="lang-link text-surface-500 hover:text-surface-900 transition-colors"
+    aria-label={t.switchLang}
+  >
+    {other.toUpperCase()}
+  </a>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>(".lang-link").forEach((el) => {
+    el.addEventListener("click", () => {
+      const l = el.dataset.setLang;
+      if (l) {
+        try {
+          localStorage.setItem("hoja-lang", l);
+        } catch {}
+      }
+    });
+  });
+</script>

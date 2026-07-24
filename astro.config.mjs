@@ -9,6 +9,11 @@ export default defineConfig({
   // (not `??`) falls back correctly and avoids Astro's "Invalid URL" on site: "".
   site: process.env.PUBLIC_SITE || undefined,
   base: process.env.PUBLIC_BASE || "/",
+  i18n: {
+    defaultLocale: "en",
+    locales: ["en", "es"],
+    routing: { prefixDefaultLocale: false },
+  },
   integrations: [sitemap()],
   markdown: {
     shikiConfig: { theme: "github-dark", wrap: false },

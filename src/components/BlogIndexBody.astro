@@ -1,0 +1,82 @@
+---
+import Navbar from "./Navbar.astro";
+import Footer from "./Footer.astro";
+import BlogList from "./BlogList.astro";
+import { tagSlug, type Post } from "../lib/posts";
+import { getUi, type Lang } from "../i18n/ui";
+
+interface Props {
+  lang: Lang;
+  alt: string;
+  posts: Post[];
+  tags?: string[];
+  tag?: string; // when set, renders the tag-filtered view
+}
+const { lang, alt, posts, tags = [], tag } = Astro.props;
+const t = getUi(lang);
+const base = import.meta.env.BASE_URL;
+const home = lang === "es" ? `${base}es/` : base;
+---
+
+<div class="flex flex-col min-h-screen">
+  <Navbar lang={lang} alt={alt} />
+  <main class="flex-1">
+    <section class="bg-ivory pt-16 pb-8 sm:pt-20">
+      <div class="max-w-3xl mx-auto px-6 lg:px-8">
+        {tag ? (
+          <Fragment>
+            <a href={`${home}blog`} class="text-xs text-brand-600 hover:text-brand-700 font-medium">
+              ← {t.blog.allPosts}
+            </a>
+            <h1 class="mt-3 text-2xl sm:text-3xl font-semibold text-surface-900 tracking-tight">
+              {t.blog.tagged} <span class="text-brand-600">{tag}</span>
+            </h1>
+            <p class="mt-2 text-sm text-surface-500">
+              {posts.length} {posts.length === 1 ? t.blog.post : t.blog.posts}
+            </p>
+          </Fragment>
+        ) : (
+          <Fragment>
+            <p class="text-xs font-medium text-brand-600 uppercase tracking-wider mb-3">{t.blog.eyebrow}</p>
+            <h1 class="text-2xl sm:text-3xl font-semibold text-surface-900 tracking-tight">
+              {t.blog.title}
+            </h1>
+            <p class="mt-4 text-base text-surface-600 leading-relaxed">{t.blog.intro}</p>
+            <div class="mt-8">
+              <input
+                id="search"
+                type="search"
+                placeholder={t.blog.search}
+                aria-label={t.blog.search}
+                class="w-full max-w-md text-sm px-3.5 py-2 rounded-md border border-surface-300 bg-surface-50 text-surface-800 placeholder:text-surface-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 transition-colors"
+              />
+            </div>
+            {tags.length > 0 && (
+              <div class="flex flex-wrap gap-2 mt-4">
+                {tags.map((tg) => (
+                  <a
+                    href={`${home}blog/tag/${tagSlug(tg)}`}
+                    class="text-xs font-medium px-3 py-1.5 rounded-full border border-surface-300 text-surface-600 hover:border-brand-500 hover:text-brand-600 transition-colors"
+                  >
+                    {tg}
+                  </a>
+                ))}
+              </div>
+            )}
+          </Fragment>
+        )}
+      </div>
+    </section>
+
+    <section class="bg-ivory pb-20 sm:pb-24">
+      <div class="max-w-3xl mx-auto px-6 lg:px-8">
+        {posts.length === 0 ? (
+          <p class="text-sm text-surface-500">{t.blog.noPosts}</p>
+        ) : (
+          <BlogList posts={posts} lang={lang} />
+        )}
+      </div>
+    </section>
+  </main>
+  <Footer lang={lang} />
+</div>

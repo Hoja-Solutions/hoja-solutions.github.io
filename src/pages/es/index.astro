@@ -1,12 +1,12 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
-import Landing from "../components/Landing.astro";
-import { getUi } from "../i18n/ui";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Landing from "../../components/Landing.astro";
+import { getUi } from "../../i18n/ui";
 
-const lang = "en";
+const lang = "es";
 const t = getUi(lang);
 const base = import.meta.env.BASE_URL;
-const alt = `${base}es/`;
+const alt = base;
 
 const ogImage = Astro.site
   ? new URL(`${base}og-home.png`, Astro.site).href

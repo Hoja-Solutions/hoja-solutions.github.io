@@ -41,6 +41,4 @@ The pack skips topics that community skills already handle. Agent patterns, cont
 
 A skill loads on demand, which means a weaker model may not select the right one. On a smaller model you load it explicitly rather than trusting auto-trigger.
 
-## The durable point
-
 Anthropic's engineering blog is the best public documentation of agent engineering practice. That knowledge should ship as something you can install. When you need an agent to handle reward hacking, or you need an eval suite that stays honest, or you need hooks that gate commands and screen injections, the procedure should be in your repository already.

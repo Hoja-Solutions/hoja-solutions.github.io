@@ -1,4 +1,12 @@
 ---
+import { getUi, type Lang } from "../i18n/ui";
+
+interface Props {
+  lang?: Lang;
+}
+const { lang = "en" } = Astro.props;
+const t = getUi(lang);
+
 const technologies = [
   // Models
   { name: "OpenAI", slug: null, logo: "/logos/openai.svg" },
@@ -26,12 +34,12 @@ const technologies = [
 <section id="technologies" class="bg-ivory pt-16 pb-20 sm:pt-20 sm:pb-24 lg:pt-24 lg:pb-28">
   <div class="max-w-7xl mx-auto px-6 lg:px-8">
     <div class="max-w-2xl mb-12 sm:mb-16">
-      <p class="text-xs font-medium text-brand-600 uppercase tracking-wider mb-3">Technologies</p>
+      <p class="text-xs font-medium text-brand-600 uppercase tracking-wider mb-3">{t.technologies.eyebrow}</p>
       <h2 class="text-2xl sm:text-3xl font-semibold text-surface-900 tracking-tight">
-        Our technology stack
+        {t.technologies.title}
       </h2>
       <p class="mt-4 text-base text-surface-600 leading-relaxed">
-        We lean toward open-source models and vector search you can own and run on your own infrastructure. As a consultancy, we also work with the stack your team already runs.
+        {t.technologies.body}
       </p>
     </div>
 

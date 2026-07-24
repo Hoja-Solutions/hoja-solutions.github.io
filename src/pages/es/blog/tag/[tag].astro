@@ -1,11 +1,11 @@
 ---
-import BaseLayout from "../../../layouts/BaseLayout.astro";
-import BlogIndexBody from "../../../components/BlogIndexBody.astro";
-import { getPosts, allTags, tagSlug } from "../../../lib/posts";
-import { getUi } from "../../../i18n/ui";
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import BlogIndexBody from "../../../../components/BlogIndexBody.astro";
+import { getPosts, allTags, tagSlug } from "../../../../lib/posts";
+import { getUi } from "../../../../i18n/ui";
 
 export async function getStaticPaths() {
-  const posts = await getPosts("en");
+  const posts = await getPosts("es");
   return allTags(posts).map((tag) => ({
     params: { tag: tagSlug(tag) },
     props: { tag, posts: posts.filter((p) => (p.data.tags ?? []).includes(tag)) },
@@ -13,10 +13,10 @@ export async function getStaticPaths() {
 }
 
 const { tag, posts } = Astro.props;
-const lang = "en" as const;
+const lang = "es" as const;
 const t = getUi(lang);
 const base = import.meta.env.BASE_URL;
-const alt = `${base}es/blog`;
+const alt = `${base}blog`;
 ---
 
 <BaseLayout

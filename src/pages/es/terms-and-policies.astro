@@ -1,0 +1,16 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Terms from "../../components/Terms.astro";
+
+const base = import.meta.env.BASE_URL;
+const alt = `${base}terms-and-policies`;
+---
+
+<BaseLayout
+  lang="es"
+  alt={alt}
+  title="Términos y Políticas — Hoja"
+  description="Términos de contratación, privacidad de datos, limitaciones de la IA y políticas open-source."
+>
+  <Terms lang="es" alt={alt} />
+</BaseLayout>

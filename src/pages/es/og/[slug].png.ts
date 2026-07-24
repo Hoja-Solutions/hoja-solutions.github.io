@@ -1,10 +1,10 @@
 import type { APIRoute } from "astro";
 import sharp from "sharp";
-import { portraitSVG } from "../../lib/portrait";
-import { getPosts, slugOf, type Post } from "../../lib/posts";
+import { portraitSVG } from "../../../lib/portrait";
+import { getPosts, slugOf, type Post } from "../../../lib/posts";
 
 export async function getStaticPaths() {
-  const posts = await getPosts("en");
+  const posts = await getPosts("es");
   return posts.map((post) => ({ params: { slug: slugOf(post) }, props: { post } }));
 }
 

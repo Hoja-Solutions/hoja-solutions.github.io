@@ -1,0 +1,26 @@
+---
+import Navbar from "./Navbar.astro";
+import Hero from "./Hero.astro";
+import Services from "./Services.astro";
+import Technologies from "./Technologies.astro";
+import CTA from "./CTA.astro";
+import Footer from "./Footer.astro";
+import type { Lang } from "../i18n/ui";
+
+interface Props {
+  lang: Lang;
+  alt: string;
+}
+const { lang, alt } = Astro.props;
+---
+
+<div class="flex flex-col min-h-screen">
+  <Navbar lang={lang} alt={alt} />
+  <main class="flex-1">
+    <Hero lang={lang} />
+    <Services lang={lang} />
+    <Technologies lang={lang} />
+    <CTA lang={lang} />
+  </main>
+  <Footer lang={lang} />
+</div>

@@ -1,0 +1,157 @@
+---
+import Navbar from "./Navbar.astro";
+import Footer from "./Footer.astro";
+import { render } from "astro:content";
+import { generatePortrait } from "../lib/portrait";
+import { readingTime, tagSlug, slugOf, type Post } from "../lib/posts";
+import { getUi, type Lang } from "../i18n/ui";
+
+interface Props {
+  lang: Lang;
+  alt: string;
+  post: Post;
+  older: Post | null;
+  newer: Post | null;
+  related: Post[];
+}
+const { lang, alt, post, older, newer, related } = Astro.props;
+const t = getUi(lang);
+const base = import.meta.env.BASE_URL;
+const home = lang === "es" ? `${base}es/` : base;
+const locale = lang === "es" ? "es" : "en-US";
+
+const { Content, headings } = await render(post);
+const toc = headings.filter((h) => h.depth === 2);
+const rt = readingTime(post.body);
+
+// Deterministic constellation illustration, shared with the Open Graph image.
+const { points, lines } = generatePortrait(post.body);
+
+const dateFmt = { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" } as const;
+---
+
+<div class="flex flex-col min-h-screen">
+  <Navbar lang={lang} alt={alt} />
+  <main class="flex-1">
+    <article class="bg-ivory pt-16 pb-20 sm:pt-20 sm:pb-24">
+      <div class="max-w-3xl mx-auto px-6 lg:px-8">
+        <div class="mb-8">
+          <a href={`${home}blog`} class="text-xs text-brand-600 hover:text-brand-700 font-medium">
+            ← {t.blog.back}
+          </a>
+          <div class="illustration-container mt-3 mb-4">
+            <svg viewBox="0 0 300 100" class="illustration-svg" preserveAspectRatio="none" width="100%" height="100%">
+              {lines.map((l) => (
+                <line x1={`${points[l.a].x}%`} y1={`${points[l.a].y}%`} x2={`${points[l.b].x}%`} y2={`${points[l.b].y}%`} stroke={l.color} stroke-width="0.5" stroke-opacity={l.opacity} />
+              ))}
+              {points.map((p) => (
+                <circle cx={`${p.x}%`} cy={`${p.y}%`} r="1.5" fill={p.color} />
+              ))}
+            </svg>
+          </div>
+
+          <h1 class="text-2xl sm:text-3xl font-semibold text-surface-900 tracking-tight">
+            {post.data.title}
+          </h1>
+          <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-3 text-xs text-surface-500">
+            <time class="font-brand tabular-nums">
+              {post.data.date.toLocaleDateString(locale, dateFmt)}
+            </time>
+            <span aria-hidden="true">·</span>
+            <span>{rt} {t.blog.minRead}</span>
+            {post.data.updated && (
+              <Fragment>
+                <span aria-hidden="true">·</span>
+                <span>{t.blog.updated} {post.data.updated.toLocaleDateString(locale, dateFmt)}</span>
+              </Fragment>
+            )}
+          </div>
+          {post.data.tags?.length && (
+            <div class="mt-3 flex flex-wrap gap-1.5">
+              {post.data.tags.map((tag) => (
+                <a href={`${home}blog/tag/${tagSlug(tag)}`} class="text-[11px] text-surface-500 hover:text-brand-600 hover:border-brand-500 border border-surface-200 rounded-full px-2 py-0.5 transition-colors">
+                  {tag}
+                </a>
+              ))}
+            </div>
+          )}
+          <p class="text-sm text-surface-500 leading-relaxed mt-4 border-l-2 border-brand-500 pl-3">
+            {post.data.description}
+          </p>
+        </div>
+
+        {toc.length >= 3 && (
+          <nav class="mb-8 rounded-md border border-surface-200 bg-surface-50 p-4" aria-label={t.blog.onThisPage}>
+            <p class="text-xs font-medium uppercase tracking-wider text-surface-500 mb-2">{t.blog.onThisPage}</p>
+            <ul class="space-y-1">
+              {toc.map((h) => (
+                <li>
+                  <a href={`#${h.slug}`} class="text-sm text-surface-600 hover:text-brand-600 transition-colors">
+                    {h.text}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
+
+        <div class="prose">
+          <Content />
+        </div>
+
+        {related.length > 0 && (
+          <div class="mt-12 pt-8 border-t border-surface-200">
+            <p class="text-xs font-medium uppercase tracking-wider text-surface-500 mb-4">{t.blog.related}</p>
+            <ul class="space-y-3">
+              {related.map((p) => (
+                <li>
+                  <a href={`${home}blog/${slugOf(p)}`} class="text-sm font-medium text-surface-900 hover:text-brand-600 transition-colors">
+                    {p.data.title}
+                  </a>
+                  <p class="text-xs text-surface-500 mt-0.5">{p.data.description}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {(older || newer) && (
+          <nav class="mt-12 pt-8 border-t border-surface-200 flex justify-between gap-4 text-sm" aria-label="Post navigation">
+            <div class="flex-1">
+              {older && (
+                <a href={`${home}blog/${slugOf(older)}`} class="group inline-block">
+                  <span class="block text-xs text-surface-400">{t.blog.older}</span>
+                  <span class="text-surface-700 group-hover:text-brand-600 transition-colors">{older.data.title}</span>
+                </a>
+              )}
+            </div>
+            <div class="flex-1 text-right">
+              {newer && (
+                <a href={`${home}blog/${slugOf(newer)}`} class="group inline-block">
+                  <span class="block text-xs text-surface-400">{t.blog.newer}</span>
+                  <span class="text-surface-700 group-hover:text-brand-600 transition-colors">{newer.data.title}</span>
+                </a>
+              )}
+            </div>
+          </nav>
+        )}
+      </div>
+    </article>
+  </main>
+  <Footer lang={lang} />
+</div>
+
+<style>
+  .illustration-container {
+    width: 100%;
+    aspect-ratio: 3 / 1;
+    background: var(--color-ivory-dark);
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--color-surface-200);
+  }
+  .illustration-svg {
+    width: 100%;
+    height: 100%;
+  }
+</style>

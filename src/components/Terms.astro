@@ -1,0 +1,68 @@
+---
+import Navbar from "./Navbar.astro";
+import Footer from "./Footer.astro";
+import type { Lang } from "../i18n/ui";
+
+interface Props {
+  lang: Lang;
+  alt: string;
+}
+const { lang, alt } = Astro.props;
+
+const content = {
+  en: {
+    eyebrow: "Legal",
+    title: "Terms and Policies",
+    updated: "Last updated: July 2026",
+    sections: [
+      { h: "1. Engagement & Scope of Work", p: "We operate under a Master Services Agreement (MSA) for each client engagement, supplemented by a Statement of Work (SOW) that defines deliverables, timelines, and acceptance criteria. Work proceeds in phases, and scope changes require a written addendum. Invoices are issued per milestone or monthly, payable within 30 days." },
+      { h: "2. Data Processing & Privacy", p: "We treat all client data as confidential and process it solely to deliver the agreed work. Data resides on isolated infrastructure, encrypted at rest and in transit. We do not retain client data beyond the project lifecycle unless explicitly requested, and we delete or return all materials at project close. If personal data is involved, we execute a Data Processing Agreement (DPA) that outlines protection measures, residency requirements, and deletion schedules." },
+      { h: "3. Intellectual Property", p: "Upon full payment, the client owns the delivered code, models, documentation, and configurations. We retain the right to reuse generic components, internal tooling, and open-source dependencies that are not specific to the client. Background IP remains ours. We do not claim ownership over client data or business logic." },
+      { h: "4. AI & Model Limitations", p: "Machine learning systems are probabilistic. We design, train, and evaluate models to perform within documented parameters, but we do not guarantee 100% accuracy or deterministic outputs. Clients should implement human oversight for critical decisions and validate model behavior against their own data distributions before deploying to production. We recommend periodic re-evaluation as data drifts or requirements change." },
+      { h: "5. Open Source & Licensing", p: "We build on open-source tools and open-weight models. We track all dependencies, comply with their licenses, and include required attribution in delivered software. We avoid copyleft-licensed components in client deliverables unless the client explicitly agrees to the terms. If we contribute back to the open-source community, we do so without incorporating client IP or confidential data." },
+      { h: "6. Acceptable Use", p: "Clients agree not to use our systems for illegal activities, harassment, deception, or any purpose that violates applicable law. Rate limits and usage thresholds apply to production deployments. Abuse, including automated scraping, credential stuffing, or malicious prompt injection, will result in suspension and may trigger legal action." },
+      { h: "7. Limitation of Liability", p: "Our liability for any claim arising from an engagement is capped at the total value of that engagement. We are not liable for indirect, incidental, or consequential damages, including lost profits or data loss resulting from third-party outages, client-side misconfigurations, or force majeure events." },
+      { h: "8. Disclaimer", p: "This page outlines our standard operating policies. It does not replace the contractual terms in an MSA or SOW. If you have a question about a specific engagement, contact us before signing. We recommend having your own legal counsel review all agreements." },
+    ],
+  },
+  es: {
+    eyebrow: "Legal",
+    title: "Términos y Políticas",
+    updated: "Última actualización: julio de 2026",
+    sections: [
+      { h: "1. Contratación y Alcance del Trabajo", p: "Trabajamos bajo un Contrato Marco de Servicios (MSA) para cada proyecto con un cliente, complementado por un Enunciado de Trabajo (SOW) que define entregables, plazos y criterios de aceptación. El trabajo avanza por fases, y todo cambio de alcance requiere un anexo por escrito. Las facturas se emiten por hito o de forma mensual, y son pagaderas dentro de los 30 días." },
+      { h: "2. Tratamiento de Datos y Privacidad", p: "Tratamos todos los datos del cliente como confidenciales y los procesamos únicamente para entregar el trabajo acordado. Los datos residen en infraestructura aislada, cifrados en reposo y en tránsito. No conservamos los datos del cliente más allá del ciclo de vida del proyecto salvo que se solicite de forma explícita, y eliminamos o devolvemos todos los materiales al cierre del proyecto. Cuando hay datos personales involucrados, firmamos un Acuerdo de Tratamiento de Datos (DPA) que detalla las medidas de protección, los requisitos de residencia y los plazos de eliminación." },
+      { h: "3. Propiedad Intelectual", p: "Tras el pago completo, el cliente es dueño del código, los modelos, la documentación y las configuraciones entregadas. Conservamos el derecho de reutilizar componentes genéricos, herramientas internas y dependencias open-source que no sean específicas del cliente. La propiedad intelectual previa sigue siendo nuestra. No reclamamos la propiedad de los datos ni de la lógica de negocio del cliente." },
+      { h: "4. Limitaciones de la IA y de los Modelos", p: "Los sistemas de machine learning son probabilísticos. Diseñamos, entrenamos y evaluamos los modelos para que funcionen dentro de parámetros documentados, pero no garantizamos una precisión del 100% ni resultados deterministas. Los clientes deben implementar supervisión humana para las decisiones críticas y validar el comportamiento del modelo con sus propios datos antes de llevarlo a producción. Recomendamos una reevaluación periódica a medida que los datos cambian o los requisitos evolucionan." },
+      { h: "5. Open Source y Licencias", p: "Construimos sobre herramientas open-source y modelos open-weight. Rastreamos todas las dependencias, cumplimos con sus licencias e incluimos la atribución requerida en el software entregado. Evitamos componentes con licencia copyleft en los entregables del cliente salvo que el cliente acepte expresamente sus términos. Cuando contribuimos de vuelta a la comunidad open-source, lo hacemos sin incorporar propiedad intelectual ni datos confidenciales del cliente." },
+      { h: "6. Uso Aceptable", p: "Los clientes se comprometen a no usar nuestros sistemas para actividades ilegales, acoso, engaño o cualquier fin que viole la ley aplicable. Se aplican límites de tasa y umbrales de uso a los despliegues en producción. El abuso, incluido el scraping automatizado, el relleno de credenciales o la inyección de prompts maliciosa, resultará en la suspensión del servicio y podrá dar lugar a acciones legales." },
+      { h: "7. Limitación de Responsabilidad", p: "Nuestra responsabilidad por cualquier reclamo derivado de un proyecto está limitada al valor total de ese proyecto. No somos responsables de daños indirectos, incidentales o consecuentes, incluyendo la pérdida de ganancias o de datos que resulten de caídas de terceros, configuraciones incorrectas del lado del cliente o eventos de fuerza mayor." },
+      { h: "8. Aviso Legal", p: "Esta página describe nuestras políticas operativas estándar. No reemplaza los términos contractuales de un MSA o un SOW. Si tienes una pregunta sobre un proyecto específico, contáctanos antes de firmar. Recomendamos que tu propio asesor legal revise todos los acuerdos." },
+    ],
+  },
+};
+const c = content[lang] ?? content.en;
+---
+
+<div class="flex flex-col min-h-screen">
+  <Navbar lang={lang} alt={alt} />
+  <main class="flex-1">
+    <section class="bg-ivory pt-16 pb-20 sm:pt-20 sm:pb-24">
+      <div class="max-w-3xl mx-auto px-6 lg:px-8">
+        <p class="text-xs font-medium text-brand-600 uppercase tracking-wider mb-3">{c.eyebrow}</p>
+        <h1 class="text-2xl sm:text-3xl font-semibold text-surface-900 tracking-tight">{c.title}</h1>
+        <p class="mt-2 text-xs text-surface-500">{c.updated}</p>
+
+        <div class="prose mt-8">
+          {c.sections.map((s) => (
+            <section>
+              <h2>{s.h}</h2>
+              <p>{s.p}</p>
+            </section>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer lang={lang} />
+</div>

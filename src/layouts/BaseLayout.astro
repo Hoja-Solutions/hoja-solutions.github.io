@@ -1,41 +1,65 @@
 ---
 import "../global.css";
 import type { AstroComponent } from "astro";
+import type { Lang } from "../i18n/ui";
 
 type Props = {
   title: string;
   description: string;
+  lang?: Lang;
+  alt?: string; // path to the other-language version of this page
   image?: string;
   ogType?: string;
+  date?: string | Date; // publish date, for article pages
   jsonLd?: Record<string, unknown>;
   children: AstroComponent;
 };
 
-const { title, description, image, ogType = "website", jsonLd } = Astro.props;
+const {
+  title,
+  description,
+  lang = "en",
+  alt,
+  image,
+  ogType = "website",
+  date,
+  jsonLd,
+} = Astro.props;
+
 const canonical = Astro.site
   ? new URL(Astro.url.pathname, Astro.site).href
   : Astro.url.href;
-const rssHref = `${import.meta.env.BASE_URL}rss.xml`;
+const rssHref = `${import.meta.env.BASE_URL}${lang === "es" ? "es/" : ""}rss.xml`;
+
+const altLang: Lang = lang === "en" ? "es" : "en";
+const altAbs = alt && Astro.site ? new URL(alt, Astro.site).href : alt;
+const xDefault = lang === "en" ? canonical : altAbs;
 ---
 
 <!doctype html>
-<html lang="en" class="scroll-smooth">
+<html lang={lang} class="scroll-smooth">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#faf8f2" />
     <meta name="description" content={description} />
-    <link
-      rel="alternate"
-      type="application/rss+xml"
-      title="Hoja Blog"
-      href={rssHref}
-    />
+    <link rel="alternate" type="application/rss+xml" title="Hoja Blog" href={rssHref} />
+    {alt && (
+      <Fragment>
+        <link rel="alternate" hreflang={lang} href={canonical} />
+        <link rel="alternate" hreflang={altLang} href={altAbs} />
+        <link rel="alternate" hreflang="x-default" href={xDefault} />
+      </Fragment>
+    )}
     <meta property="og:type" content={ogType} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={lang === "es" ? "es_ES" : "en_US"} />
     <link rel="canonical" href={canonical} />
+    {date && ogType === "article" && (
+      <meta property="article:published_time" content={new Date(date).toISOString()} />
+    )}
     {image && (
       <Fragment>
         <meta property="og:image" content={image} />
@@ -45,10 +69,7 @@ const rssHref = `${import.meta.env.BASE_URL}rss.xml`;
         <meta property="og:image:alt" content={title} />
       </Fragment>
     )}
-    <meta
-      name="twitter:card"
-      content={image ? "summary_large_image" : "summary"}
-    />
+    <meta name="twitter:card" content={image ? "summary_large_image" : "summary"} />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     {image && <meta name="twitter:image" content={image} />}
@@ -56,6 +77,24 @@ const rssHref = `${import.meta.env.BASE_URL}rss.xml`;
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     {jsonLd && (
       <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    )}
+    {alt && (
+      <script is:inline define:vars={{ lang, altPath: alt }}>
+        (function () {
+          try {
+            var stored = localStorage.getItem("hoja-lang");
+            if (stored) {
+              if (stored !== lang) location.replace(altPath);
+            } else {
+              var pref =
+                (navigator.language || "").toLowerCase().slice(0, 2) === "es"
+                  ? "es"
+                  : "en";
+              if (pref !== lang) location.replace(altPath);
+            }
+          } catch (e) {}
+        })();
+      </script>
     )}
     <title>{title}</title>
   </head>

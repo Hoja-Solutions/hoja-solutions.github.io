@@ -1,54 +1,39 @@
 ---
-// Each scene is a small illustration in the same green line + fill style as
-// the hero and contact art, sized 160x72, meaning tied to the service above it.
-const services = [
-  {
-    title: "AI Knowledge Bases",
-    description: "We connect your documents and databases to AI. Your teams ask questions in natural language and get accurate, sourced answers. Access controls match your business rules.",
-    scene: `<svg viewBox="0 0 160 72" width="160" height="72" fill="none"><rect x="46" y="10" width="40" height="50" rx="4" fill="#d7f0a5" stroke="#4d9622" stroke-width="2.5"/><line x1="54" y1="24" x2="78" y2="24" stroke="#6bb82d" stroke-width="2" stroke-linecap="round"/><line x1="54" y1="34" x2="70" y2="34" stroke="#6bb82d" stroke-width="2" stroke-linecap="round"/><circle cx="90" cy="42" r="12" fill="none" stroke="#4d9622" stroke-width="2.5"/><line x1="98.5" y1="50.5" x2="108" y2="60" stroke="#4d9622" stroke-width="3" stroke-linecap="round"/></svg>`,
-  },
-  {
-    title: "AI Agents",
-    description: "We build agents that act on your behalf. They read data, act within limits you set, and connect to the CRM, messaging, and project tools your teams already use.",
-    scene: `<svg viewBox="0 0 160 72" width="160" height="72" fill="none"><line x1="80" y1="36" x2="49" y2="20" stroke="#b5ada0" stroke-width="1.8"/><line x1="80" y1="36" x2="49" y2="54" stroke="#b5ada0" stroke-width="1.8"/><line x1="80" y1="36" x2="115" y2="36" stroke="#b5ada0" stroke-width="1.8"/><circle cx="45" cy="18" r="5" fill="#8fd042" stroke="#4d9622" stroke-width="2"/><circle cx="45" cy="56" r="5" fill="#8fd042" stroke="#4d9622" stroke-width="2"/><circle cx="119" cy="36" r="5" fill="#8fd042" stroke="#4d9622" stroke-width="2"/><circle cx="80" cy="36" r="13" fill="#d7f0a5" stroke="#4d9622" stroke-width="2.5"/><circle cx="76" cy="34" r="1.8" fill="#3a741c"/><circle cx="84" cy="34" r="1.8" fill="#3a741c"/></svg>`,
-  },
-  {
-    title: "Data Engineering",
-    description: "We build pipelines that collect and serve your data. Your teams get reliable access to information. Your models stay accurate with fresh data.",
-    scene: `<svg viewBox="0 0 160 72" width="160" height="72" fill="none"><path d="M60 12 H100 L86 32 H74 Z" fill="#d7f0a5" stroke="#4d9622" stroke-width="2.5" stroke-linejoin="round"/><ellipse cx="80" cy="46" rx="15" ry="4.5" fill="#8fd042" stroke="#4d9622" stroke-width="2.5"/><path d="M65 46 V60 A15 4.5 0 0 0 95 60 V46" fill="#d7f0a5" stroke="#4d9622" stroke-width="2.5"/></svg>`,
-  },
-  {
-    title: "Custom Software",
-    description: "We build web applications and APIs that fit your workflow, with clean architecture and tested code. Your team maintains the product after launch.",
-    scene: `<svg viewBox="0 0 160 72" width="160" height="72" fill="none"><rect x="34" y="12" width="92" height="48" rx="4" fill="#d7f0a5" stroke="#4d9622" stroke-width="2.5"/><line x1="34" y1="24" x2="126" y2="24" stroke="#4d9622" stroke-width="2.5"/><circle cx="42" cy="18" r="1.8" fill="#4d9622"/><circle cx="49" cy="18" r="1.8" fill="#4d9622"/><circle cx="56" cy="18" r="1.8" fill="#4d9622"/><line x1="44" y1="37" x2="116" y2="37" stroke="#6bb82d" stroke-width="2" stroke-linecap="round"/><line x1="44" y1="47" x2="98" y2="47" stroke="#6bb82d" stroke-width="2" stroke-linecap="round"/></svg>`,
-  },
-  {
-    title: "MLOps & Infrastructure",
-    description: "We ship AI systems into production and keep them running, with automated training, monitoring, and scaling. It keeps running without someone watching it.",
-    scene: `<svg viewBox="0 0 160 72" width="160" height="72" fill="none"><rect x="40" y="20" width="34" height="36" rx="3" fill="#d7f0a5" stroke="#4d9622" stroke-width="2.5"/><line x1="48" y1="30" x2="66" y2="30" stroke="#6bb82d" stroke-width="2" stroke-linecap="round"/><line x1="48" y1="38" x2="66" y2="38" stroke="#6bb82d" stroke-width="2" stroke-linecap="round"/><rect x="90" y="42" width="8" height="14" fill="#8fd042" stroke="#4d9622" stroke-width="1.8"/><rect x="102" y="32" width="8" height="24" fill="#8fd042" stroke="#4d9622" stroke-width="1.8"/><rect x="114" y="22" width="8" height="34" fill="#8fd042" stroke="#4d9622" stroke-width="1.8"/></svg>`,
-  },
-  {
-    title: "Technical Strategy",
-    description: "We assess your data, pick the right approach, and scope the build. You get a plan with timelines and a clear yes or no.",
-    scene: `<svg viewBox="0 0 160 72" width="160" height="72" fill="none"><path d="M20 62 C 46 62 40 48 64 50 C 90 52 82 34 118 46" fill="none" stroke="#b5ada0" stroke-width="2.2" stroke-dasharray="2 6" stroke-linecap="round"/><circle cx="20" cy="62" r="3.2" fill="#b5ada0"/><line x1="118" y1="18" x2="118" y2="46" stroke="#4d9622" stroke-width="2.5" stroke-linecap="round"/><path d="M118 18 L134 24 L118 30 Z" fill="#8fd042" stroke="#4d9622" stroke-width="2" stroke-linejoin="round"/></svg>`,
-  },
+import { getUi, type Lang } from "../i18n/ui";
+
+interface Props {
+  lang?: Lang;
+}
+const { lang = "en" } = Astro.props;
+const t = getUi(lang);
+
+// Illustrations are language-agnostic; paired to the items by index.
+const scenes = [
+  `<svg viewBox="0 0 160 72" width="160" height="72" fill="none"><rect x="46" y="10" width="40" height="50" rx="4" fill="#d7f0a5" stroke="#4d9622" stroke-width="2.5"/><line x1="54" y1="24" x2="78" y2="24" stroke="#6bb82d" stroke-width="2" stroke-linecap="round"/><line x1="54" y1="34" x2="70" y2="34" stroke="#6bb82d" stroke-width="2" stroke-linecap="round"/><circle cx="90" cy="42" r="12" fill="none" stroke="#4d9622" stroke-width="2.5"/><line x1="98.5" y1="50.5" x2="108" y2="60" stroke="#4d9622" stroke-width="3" stroke-linecap="round"/></svg>`,
+  `<svg viewBox="0 0 160 72" width="160" height="72" fill="none"><line x1="80" y1="36" x2="49" y2="20" stroke="#b5ada0" stroke-width="1.8"/><line x1="80" y1="36" x2="49" y2="54" stroke="#b5ada0" stroke-width="1.8"/><line x1="80" y1="36" x2="115" y2="36" stroke="#b5ada0" stroke-width="1.8"/><circle cx="45" cy="18" r="5" fill="#8fd042" stroke="#4d9622" stroke-width="2"/><circle cx="45" cy="56" r="5" fill="#8fd042" stroke="#4d9622" stroke-width="2"/><circle cx="119" cy="36" r="5" fill="#8fd042" stroke="#4d9622" stroke-width="2"/><circle cx="80" cy="36" r="13" fill="#d7f0a5" stroke="#4d9622" stroke-width="2.5"/><circle cx="76" cy="34" r="1.8" fill="#3a741c"/><circle cx="84" cy="34" r="1.8" fill="#3a741c"/></svg>`,
+  `<svg viewBox="0 0 160 72" width="160" height="72" fill="none"><path d="M60 12 H100 L86 32 H74 Z" fill="#d7f0a5" stroke="#4d9622" stroke-width="2.5" stroke-linejoin="round"/><ellipse cx="80" cy="46" rx="15" ry="4.5" fill="#8fd042" stroke="#4d9622" stroke-width="2.5"/><path d="M65 46 V60 A15 4.5 0 0 0 95 60 V46" fill="#d7f0a5" stroke="#4d9622" stroke-width="2.5"/></svg>`,
+  `<svg viewBox="0 0 160 72" width="160" height="72" fill="none"><rect x="34" y="12" width="92" height="48" rx="4" fill="#d7f0a5" stroke="#4d9622" stroke-width="2.5"/><line x1="34" y1="24" x2="126" y2="24" stroke="#4d9622" stroke-width="2.5"/><circle cx="42" cy="18" r="1.8" fill="#4d9622"/><circle cx="49" cy="18" r="1.8" fill="#4d9622"/><circle cx="56" cy="18" r="1.8" fill="#4d9622"/><line x1="44" y1="37" x2="116" y2="37" stroke="#6bb82d" stroke-width="2" stroke-linecap="round"/><line x1="44" y1="47" x2="98" y2="47" stroke="#6bb82d" stroke-width="2" stroke-linecap="round"/></svg>`,
+  `<svg viewBox="0 0 160 72" width="160" height="72" fill="none"><rect x="40" y="20" width="34" height="36" rx="3" fill="#d7f0a5" stroke="#4d9622" stroke-width="2.5"/><line x1="48" y1="30" x2="66" y2="30" stroke="#6bb82d" stroke-width="2" stroke-linecap="round"/><line x1="48" y1="38" x2="66" y2="38" stroke="#6bb82d" stroke-width="2" stroke-linecap="round"/><rect x="90" y="42" width="8" height="14" fill="#8fd042" stroke="#4d9622" stroke-width="1.8"/><rect x="102" y="32" width="8" height="24" fill="#8fd042" stroke="#4d9622" stroke-width="1.8"/><rect x="114" y="22" width="8" height="34" fill="#8fd042" stroke="#4d9622" stroke-width="1.8"/></svg>`,
+  `<svg viewBox="0 0 160 72" width="160" height="72" fill="none"><path d="M20 62 C 46 62 40 48 64 50 C 90 52 82 34 118 46" fill="none" stroke="#b5ada0" stroke-width="2.2" stroke-dasharray="2 6" stroke-linecap="round"/><circle cx="20" cy="62" r="3.2" fill="#b5ada0"/><line x1="118" y1="18" x2="118" y2="46" stroke="#4d9622" stroke-width="2.5" stroke-linecap="round"/><path d="M118 18 L134 24 L118 30 Z" fill="#8fd042" stroke="#4d9622" stroke-width="2" stroke-linejoin="round"/></svg>`,
 ];
+
+const items = t.services.items.map((it, i) => ({ ...it, scene: scenes[i] }));
 ---
 
 <section id="services" class="bg-ivory pt-16 pb-20 sm:pt-20 sm:pb-24 lg:pt-24 lg:pb-28">
   <div class="max-w-7xl mx-auto px-6 lg:px-8">
     <div class="max-w-2xl mb-12 sm:mb-16">
-      <p class="text-xs font-medium text-brand-600 uppercase tracking-wider mb-3">Services</p>
+      <p class="text-xs font-medium text-brand-600 uppercase tracking-wider mb-3">{t.services.eyebrow}</p>
       <h2 class="text-2xl sm:text-3xl font-semibold text-surface-900 tracking-tight">
-        What we do
+        {t.services.title}
       </h2>
       <p class="mt-4 text-base text-surface-600 leading-relaxed">
-        From data pipelines to production AI products. Pick what you need, or let us scope the whole engagement.
+        {t.services.body}
       </p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-      {services.map((service) => (
+      {items.map((service) => (
         <article class="flex flex-col rounded-lg border border-surface-200 bg-surface-50 p-5 transition-colors hover:border-brand-500/50">
           <h3 class="text-base font-medium text-surface-900 mb-1.5">{service.title}</h3>
           <p class="text-sm text-surface-600 leading-relaxed">{service.description}</p>
