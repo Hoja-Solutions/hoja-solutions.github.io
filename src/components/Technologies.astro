@@ -1,25 +1,25 @@
 ---
 const technologies = [
-  // Model providers
+  // Models
   { name: "OpenAI", slug: null, logo: "/logos/openai.svg" },
   { name: "Anthropic", slug: "anthropic", logo: null },
   { name: "Qwen", slug: "qwen", logo: null },
-  { name: "AWS", slug: null, logo: "/logos/aws.svg" },
-  // Cloud & compute
-  { name: "Google Cloud", slug: "googlecloud", logo: null },
-  { name: "Modal", slug: "modal", logo: null },
-  { name: "LangChain", slug: "langchain", logo: null },
-  { name: "LangGraph", slug: "langgraph", logo: null },
-  // Serving & data
-  { name: "vLLM", slug: "vllm", logo: null },
-  { name: "Milvus", slug: "milvus", logo: null },
-  { name: "MLflow", slug: "mlflow", logo: null },
-  { name: "Databricks", slug: "databricks", logo: null },
-  // Platform & infra
   { name: "Hugging Face", slug: "huggingface", logo: null },
+  // Serving & orchestration
+  { name: "vLLM", slug: "vllm", logo: null },
+  { name: "Ollama", slug: "ollama", logo: null },
+  { name: "LangGraph", slug: "langgraph", logo: null },
+  { name: "MLflow", slug: "mlflow", logo: null },
+  // Data & vector
+  { name: "PostgreSQL", slug: "postgresql", logo: null },
+  { name: "Qdrant", slug: "qdrant", logo: null },
+  { name: "Redis", slug: "redis", logo: null },
+  { name: "Databricks", slug: "databricks", logo: null },
+  // Cloud & infrastructure
+  { name: "AWS", slug: null, logo: "/logos/aws.svg" },
+  { name: "Google Cloud", slug: "googlecloud", logo: null },
   { name: "Docker", slug: "docker", logo: null },
   { name: "Kubernetes", slug: "kubernetes", logo: null },
-  { name: "Redis", slug: "redis", logo: null },
 ];
 ---
 
@@ -31,7 +31,7 @@ const technologies = [
         Our technology stack
       </h2>
       <p class="mt-4 text-base text-surface-600 leading-relaxed">
-        We build on open-source models, vector search, and orchestration that holds up in production. You can own and change the stack, and run it on infrastructure you control.
+        We lean toward open-source models and vector search you can own and run on your own infrastructure. As a consultancy, we also work with the stack your team already runs.
       </p>
     </div>
 
