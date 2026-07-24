@@ -15,145 +15,66 @@
           <span class="font-brand font-bold">Hoja</span> designs and ships machine learning models and custom software. We turn your data into prediction models and applications your team uses.
         </p>
         <div class="mt-8 flex gap-4">
-          <a href="#contact" class="text-sm font-medium text-white bg-brand-600 hover:bg-brand-700 px-5 py-2.5 rounded-md transition-colors">
-            Get in Touch
-          </a>
-          <a href="#services" class="text-sm font-medium text-surface-700 hover:text-surface-900 px-5 py-2.5 rounded-md transition-colors border border-surface-300 hover:border-surface-400">
-            Our Services
-          </a>
+          <a href="#contact" class="text-sm font-medium text-white bg-brand-600 hover:bg-brand-700 px-5 py-2.5 rounded-md transition-colors">Get in Touch</a>
+          <a href="#services" class="text-sm font-medium text-surface-700 hover:text-surface-900 px-5 py-2.5 rounded-md transition-colors border border-surface-300 hover:border-surface-400">Our Services</a>
         </div>
       </div>
 
       <div class="flex items-center justify-center">
-        <canvas id="network" width="400" height="400" class="w-64 h-64 sm:w-72 sm:h-72 lg:w-80 lg:h-80"></canvas>
+        <canvas id="leaf" width="400" height="400" class="w-64 h-64 sm:w-72 sm:h-72 lg:w-80 lg:h-80"></canvas>
       </div>
     </div>
   </div>
 </section>
 
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const canvas = document.getElementById("network");
-    if (!canvas) return;
-
-    const ctx = canvas.getContext("2d");
-    const W = canvas.width;
-    const H = canvas.height;
-
-    const greens = ["#4d9622", "#6bb82d", "#8fd042", "#b5e470"];
-    const lines = ["#4d9622", "#6bb82d", "#3a741c"];
-
-    const numNodes = 9 + Math.floor(Math.random() * 6);
-    const nodes = [];
-
-    for (let i = 0; i < numNodes; i++) {
-      nodes.push({
-        x: 40 + Math.random() * (W - 80),
-        y: 40 + Math.random() * (H - 80),
-        vx: (Math.random() - 0.5) * 0.6,
-        vy: (Math.random() - 0.5) * 0.6,
-        r: 2 + Math.random() * 5,
-        color: greens[Math.floor(Math.random() * greens.length)],
-        phase: Math.random() * Math.PI * 2,
-        speed: 0.8 + Math.random() * 1.2,
-      });
-    }
-
-    const connections = [];
-    for (let i = 0; i < nodes.length; i++) {
-      for (let j = i + 1; j < nodes.length; j++) {
-        const dx = nodes[i].x - nodes[j].x;
-        const dy = nodes[i].y - nodes[j].y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 140) {
-          connections.push({
-            a: i,
-            b: j,
-            stroke: lines[Math.floor(Math.random() * lines.length)],
-            width: dist < 80 ? 1 : 0.5,
-            pulse: Math.random() * Math.PI * 2,
-            pulseSpeed: 0.5 + Math.random() * 1.5,
-          });
-        }
-      }
-    }
-
-    const numDots = 6 + Math.floor(Math.random() * 4);
-    const dots = [];
-    for (let i = 0; i < numDots; i++) {
-      dots.push({
-        x: Math.random() * W,
-        y: Math.random() * H,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3,
-        r: 0.8 + Math.random() * 1.2,
-        color: "#8fd042",
-      });
-    }
-
+  const c = document.getElementById("leaf") as HTMLCanvasElement | null;
+  if (c) {
+    const ctx = c.getContext("2d")!;
+    const W = c.width;
+    const H = c.height;
+    const greens = ["#3a741c", "#4d9622", "#6bb82d", "#8fd042"];
     let t = 0;
-    function animate() {
-      t += 0.016;
-      ctx.clearRect(0, 0, W, H);
 
-      ctx.save();
-      ctx.translate(W / 2, H / 2);
-      ctx.rotate(t * 0.08);
-      ctx.strokeStyle = "#d8d1c1";
-      ctx.lineWidth = 0.5;
-      ctx.beginPath();
-      ctx.arc(0, 0, 150, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.restore();
-
-      connections.forEach((c) => {
-        const nA = nodes[c.a];
-        const nB = nodes[c.b];
-        const opacity = 0.25 + 0.25 * Math.sin(t * c.pulseSpeed + c.pulse);
-        ctx.strokeStyle = c.stroke + Math.round(opacity * 255).toString(16).padStart(2, "0");
-        ctx.lineWidth = c.width;
+    const draw = (
+      x: number,
+      y: number,
+      angle: number,
+      len: number,
+      width: number,
+      depth: number,
+    ) => {
+      if (depth <= 0 || len < 5) {
+        ctx.fillStyle = "#8fd042";
+        ctx.globalAlpha = 0.85;
         ctx.beginPath();
-        ctx.moveTo(nA.x, nA.y);
-        ctx.lineTo(nB.x, nB.y);
-        ctx.stroke();
-      });
-
-      nodes.forEach((n) => {
-        n.x += n.vx * n.speed;
-        n.y += n.vy * n.speed;
-
-        const wobble = Math.sin(t * n.speed + n.phase);
-        if (Math.abs(n.vx) < 0.01) n.vx = (Math.random() - 0.5) * 0.3;
-        if (Math.abs(n.vy) < 0.01) n.vy = (Math.random() - 0.5) * 0.3;
-
-        if (n.x < 30 || n.x > W - 30) n.vx *= -1;
-        if (n.y < 30 || n.y > H - 30) n.vy *= -1;
-
-        n.x = Math.max(30, Math.min(W - 30, n.x));
-        n.y = Math.max(30, Math.min(H - 30, n.y));
-
-        ctx.fillStyle = n.color;
-        ctx.beginPath();
-        ctx.arc(n.x, n.y + wobble * 3, n.r, 0, Math.PI * 2);
-        ctx.fill();
-      });
-
-      dots.forEach((d) => {
-        d.x += d.vx;
-        d.y += d.vy;
-        if (d.x < 0 || d.x > W) d.vx *= -1;
-        if (d.y < 0 || d.y > H) d.vy *= -1;
-        ctx.fillStyle = d.color;
-        ctx.globalAlpha = 0.6;
-        ctx.beginPath();
-        ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+        ctx.arc(x, y, 2.4, 0, Math.PI * 2);
         ctx.fill();
         ctx.globalAlpha = 1;
-      });
+        return;
+      }
+      const sway = Math.sin(t + depth * 0.6) * 0.045;
+      const a = angle + sway;
+      const x2 = x + Math.cos(a) * len;
+      const y2 = y + Math.sin(a) * len;
+      const ci = Math.max(0, Math.min(3, 3 - Math.floor(depth / 3)));
+      ctx.strokeStyle = greens[ci];
+      ctx.lineWidth = width;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+      draw(x2, y2, a - 0.34, len * 0.75, width * 0.7, depth - 1);
+      draw(x2, y2, a + 0.46, len * 0.7, width * 0.7, depth - 1);
+    };
 
-      requestAnimationFrame(animate);
-    }
-
-    animate();
-  });
+    const frame = () => {
+      t += 0.012;
+      ctx.clearRect(0, 0, W, H);
+      draw(W / 2, H * 0.96, -Math.PI / 2, 74, 5, 8);
+      requestAnimationFrame(frame);
+    };
+    frame();
+  }
 </script>
