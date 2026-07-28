@@ -7,27 +7,65 @@ interface Props {
 const { lang = "en" } = Astro.props;
 const t = getUi(lang);
 
-const technologies = [
-  // Models
-  { name: "OpenAI", slug: null, logo: "/logos/openai.svg" },
-  { name: "Anthropic", slug: "anthropic", logo: null },
-  { name: "Qwen", slug: "qwen", logo: null },
-  { name: "Hugging Face", slug: "huggingface", logo: null },
-  // Serving & orchestration
-  { name: "vLLM", slug: "vllm", logo: null },
-  { name: "Ollama", slug: "ollama", logo: null },
-  { name: "LangGraph", slug: "langgraph", logo: null },
-  { name: "MLflow", slug: "mlflow", logo: null },
-  // Data & vector
-  { name: "PostgreSQL", slug: "postgresql", logo: null },
-  { name: "Qdrant", slug: "qdrant", logo: null },
-  { name: "Redis", slug: "redis", logo: null },
-  { name: "Databricks", slug: "databricks", logo: null },
-  // Cloud & infrastructure
-  { name: "AWS", slug: null, logo: "/logos/aws.svg" },
-  { name: "Google Cloud", slug: "googlecloud", logo: null },
-  { name: "Docker", slug: "docker", logo: null },
-  { name: "Kubernetes", slug: "kubernetes", logo: null },
+// Grouped so the section reads as a stack rather than a wall of logos. The
+// open-weight / hosted split states what the intro copy argues: we prefer
+// models you can run yourself, and we build with whatever your team runs.
+const groups = [
+  {
+    label: t.technologies.groups.openWeights,
+    items: [
+      { name: "Qwen", slug: "qwen" },
+      { name: "Kimi", slug: "kimi" },
+      { name: "DeepSeek", slug: "deepseek" },
+      { name: "Z.ai", slug: "zdotai" },
+      { name: "Mistral", slug: "mistralai" },
+      { name: "Hugging Face", slug: "huggingface" },
+    ],
+  },
+  {
+    label: t.technologies.groups.hosted,
+    items: [
+      { name: "OpenAI", slug: "openai" },
+      { name: "Anthropic", slug: "anthropic" },
+      { name: "Gemini", slug: "googlegemini" },
+      { name: "Grok", slug: "xai" },
+      { name: "OpenRouter", slug: "openrouter" },
+      { name: "Fireworks", slug: "fireworks" },
+    ],
+  },
+  {
+    label: t.technologies.groups.serving,
+    items: [
+      { name: "vLLM", slug: "vllm" },
+      { name: "Ollama", slug: "ollama" },
+      { name: "Ray", slug: "ray" },
+      { name: "LangGraph", slug: "langgraph" },
+      { name: "MLflow", slug: "mlflow" },
+      { name: "W&B", slug: "weightsandbiases" },
+    ],
+  },
+  {
+    label: t.technologies.groups.data,
+    items: [
+      { name: "PostgreSQL", slug: "postgresql" },
+      { name: "Qdrant", slug: "qdrant" },
+      { name: "Redis", slug: "redis" },
+      { name: "Databricks", slug: "databricks" },
+      { name: "Spark", slug: "apachespark" },
+      { name: "Airflow", slug: "apacheairflow" },
+    ],
+  },
+  {
+    label: t.technologies.groups.cloud,
+    items: [
+      { name: "AWS", slug: "aws" },
+      { name: "Google Cloud", slug: "googlecloud" },
+      { name: "Docker", slug: "docker" },
+      { name: "Kubernetes", slug: "kubernetes" },
+      { name: "Terraform", slug: "terraform" },
+      { name: "GitHub Actions", slug: "githubactions" },
+    ],
+  },
 ];
 ---
 
@@ -43,18 +81,29 @@ const technologies = [
       </p>
     </div>
 
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-8">
-      {technologies.map((tech) => (
-        <div class="flex flex-col items-center text-center gap-2 group">
-          <img
-            src={tech.logo ?? `/logos/${tech.slug}.svg`}
-            alt={tech.name}
-            width="32"
-            height="32"
-            loading="lazy"
-            class="w-8 h-8 object-contain grayscale opacity-70 transition duration-300 group-hover:grayscale-0 group-hover:opacity-100"
-          />
-          <p class="text-sm font-semibold text-surface-900">{tech.name}</p>
+    <div class="space-y-10 sm:space-y-12">
+      {groups.map((group) => (
+        <div>
+          <p class="text-xs font-medium text-surface-500 uppercase tracking-wider mb-5">
+            {group.label}
+          </p>
+          {/* 6 items per group, and every column count divides 6, so a row is
+              never left ragged at any breakpoint. */}
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-y-8">
+            {group.items.map((tech) => (
+              <div class="flex flex-col items-center text-center gap-2 group">
+                <img
+                  src={`/logos/${tech.slug}.svg`}
+                  alt={tech.name}
+                  width="32"
+                  height="32"
+                  loading="lazy"
+                  class="w-8 h-8 object-contain grayscale opacity-70 transition duration-300 group-hover:grayscale-0 group-hover:opacity-100"
+                />
+                <p class="text-sm font-semibold text-surface-900 leading-tight">{tech.name}</p>
+              </div>
+            ))}
+          </div>
         </div>
       ))}
     </div>

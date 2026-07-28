@@ -31,6 +31,13 @@ export const ui = {
       eyebrow: "Technologies",
       title: "Our technology stack",
       body: "We lean toward open-source models and vector search you can own and run on your own infrastructure. As a consultancy, we also work with the stack your team already runs.",
+      groups: {
+        openWeights: "Open weights",
+        hosted: "Hosted APIs",
+        serving: "Serving & orchestration",
+        data: "Data & retrieval",
+        cloud: "Cloud & infrastructure",
+      },
     },
     contact: {
       eyebrow: "Contact",
@@ -115,6 +122,13 @@ export const ui = {
       eyebrow: "Tecnologías",
       title: "Nuestro stack tecnológico",
       body: "Preferimos modelos open-source y búsqueda vectorial que puedes controlar y ejecutar en tu propia infraestructura. Como consultora, también trabajamos con el stack que tu equipo ya usa.",
+      groups: {
+        openWeights: "Pesos abiertos",
+        hosted: "APIs alojadas",
+        serving: "Serving y orquestación",
+        data: "Datos y recuperación",
+        cloud: "Nube e infraestructura",
+      },
     },
     contact: {
       eyebrow: "Contacto",
