@@ -35,9 +35,10 @@ const locale = lang === "es" ? "es" : "en-US";
           >
             <svg
               viewBox="0 0 300 100"
-              preserveAspectRatio="none"
+              preserveAspectRatio="xMidYMid meet"
               width="100%"
               height="100%"
+              class="blog-list-illustration"
             >
               {lines.map((l) => (
                 <line
@@ -46,12 +47,12 @@ const locale = lang === "es" ? "es" : "en-US";
                   x2={`${points[l.b].x}%`}
                   y2={`${points[l.b].y}%`}
                   stroke={l.color}
-                  stroke-width="0.6"
+                  stroke-width={l.width * 0.6}
                   stroke-opacity={l.opacity}
                 />
               ))}
               {points.map((p) => (
-                <circle cx={`${p.x}%`} cy={`${p.y}%`} r="1.6" fill={p.color} />
+                <circle cx={`${p.x}%`} cy={`${p.y}%`} r={p.radius * 1.6} fill={p.color} />
               ))}
             </svg>
           </a>
@@ -190,3 +191,13 @@ const locale = lang === "es" ? "es" : "en-US";
     render();
   }
 </script>
+
+<style>
+  .blog-list-illustration {
+    animation: constellation-float-list 20s ease-in-out infinite;
+  }
+  @keyframes constellation-float-list {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-0.3px) scale(1.001); }
+  }
+</style>

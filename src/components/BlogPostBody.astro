@@ -40,12 +40,12 @@ const dateFmt = { year: "numeric", month: "long", day: "numeric", timeZone: "UTC
             ← {t.blog.back}
           </a>
           <div class="illustration-container mt-3 mb-4">
-            <svg viewBox="0 0 300 100" class="illustration-svg" preserveAspectRatio="none" width="100%" height="100%">
+            <svg viewBox="0 0 300 100" class="illustration-svg" preserveAspectRatio="xMidYMid meet" width="100%" height="100%" role="presentation" aria-hidden="true" focusable="false">
               {lines.map((l) => (
-                <line x1={`${points[l.a].x}%`} y1={`${points[l.a].y}%`} x2={`${points[l.b].x}%`} y2={`${points[l.b].y}%`} stroke={l.color} stroke-width="0.5" stroke-opacity={l.opacity} />
+                <line x1={`${points[l.a].x}%`} y1={`${points[l.a].y}%`} x2={`${points[l.b].x}%`} y2={`${points[l.b].y}%`} stroke={l.color} stroke-width={l.width * 0.6} stroke-opacity={l.opacity} />
               ))}
               {points.map((p) => (
-                <circle cx={`${p.x}%`} cy={`${p.y}%`} r="1.5" fill={p.color} />
+                <circle cx={`${p.x}%`} cy={`${p.y}%`} r={p.radius * 1.6} fill={p.color} />
               ))}
             </svg>
           </div>
@@ -153,5 +153,10 @@ const dateFmt = { year: "numeric", month: "long", day: "numeric", timeZone: "UTC
   .illustration-svg {
     width: 100%;
     height: 100%;
+    animation: constellation-float 24s ease-in-out infinite;
+  }
+  @keyframes constellation-float {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-0.5px) scale(1.001); }
   }
 </style>
