@@ -6,7 +6,7 @@ export const defaultLang: Lang = "en";
 // natural for the audience (machine learning, MLOps, stack, open-source).
 export const ui = {
   en: {
-    nav: { services: "Services", technologies: "Technologies", contact: "Contact", blog: "Blog", menu: "Toggle menu" },
+    nav: { services: "Services", technologies: "Technologies", projects: "Projects", contact: "Contact", blog: "Blog", menu: "Toggle menu" },
     hero: {
       eyebrow: "AI · Machine Learning · Data Engineering",
       title: "We build AI systems for production.",
@@ -38,6 +38,19 @@ export const ui = {
         data: "Data & retrieval",
         cloud: "Cloud & infrastructure",
       },
+    },
+    projects: {
+      eyebrow: "Projects",
+      title: "Models we made smaller",
+      body: "We quantize open-weight models so they fit on less hardware, and publish every build on Hugging Face. Credit for each original model goes to the team that trained it.",
+      smaller: "smaller than in bf16",
+      inLowBit: "in 4-bit",
+      fromWord: "from",
+      inBf16: "in bf16",
+      cell: "Each square holds about {n} GB of weights.",
+      original: "Based on",
+      open: "open on Hugging Face",
+      writeup: "Read our evaluation",
     },
     contact: {
       eyebrow: "Contact",
@@ -97,7 +110,7 @@ export const ui = {
     switchLang: "Cambiar a español",
   },
   es: {
-    nav: { services: "Servicios", technologies: "Tecnologías", contact: "Contacto", blog: "Blog", menu: "Abrir menú" },
+    nav: { services: "Servicios", technologies: "Tecnologías", projects: "Proyectos", contact: "Contacto", blog: "Blog", menu: "Abrir menú" },
     hero: {
       eyebrow: "IA · Machine Learning · Ingeniería de Datos",
       title: "Construimos sistemas de IA para producción.",
@@ -129,6 +142,19 @@ export const ui = {
         data: "Datos y recuperación",
         cloud: "Nube e infraestructura",
       },
+    },
+    projects: {
+      eyebrow: "Proyectos",
+      title: "Modelos que hicimos más pequeños",
+      body: "Cuantizamos modelos open-weight para que quepan en menos hardware y publicamos cada build en Hugging Face. El crédito de cada modelo original es del equipo que lo entrenó.",
+      smaller: "más pequeño que en bf16",
+      inLowBit: "en 4 bits",
+      fromWord: "desde",
+      inBf16: "en bf16",
+      cell: "Cada cuadro guarda unos {n} GB de pesos.",
+      original: "Basado en",
+      open: "abrir en Hugging Face",
+      writeup: "Lee nuestra evaluación",
     },
     contact: {
       eyebrow: "Contacto",

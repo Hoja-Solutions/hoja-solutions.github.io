@@ -32,6 +32,7 @@ const link = (active: boolean) =>
       <div class="hidden md:flex items-center gap-7">
         <a href={`${home}#services`} class={link(false)}>{t.nav.services}</a>
         <a href={`${home}#technologies`} class={link(false)}>{t.nav.technologies}</a>
+        <a href={`${home}#projects`} class={link(false)}>{t.nav.projects}</a>
         <a href={`${home}#contact`} class={link(false)}>{t.nav.contact}</a>
         <a href={blog} class={link(onBlog)} aria-current={onBlog ? "page" : undefined}>{t.nav.blog}</a>
         {alt && <LanguageSwitcher lang={lang} alt={alt} />}
@@ -57,6 +58,7 @@ const link = (active: boolean) =>
       <div class="flex flex-col gap-2">
         <a href={`${home}#services`} class="text-sm text-surface-600 hover:text-surface-900 py-2">{t.nav.services}</a>
         <a href={`${home}#technologies`} class="text-sm text-surface-600 hover:text-surface-900 py-2">{t.nav.technologies}</a>
+        <a href={`${home}#projects`} class="text-sm text-surface-600 hover:text-surface-900 py-2">{t.nav.projects}</a>
         <a href={`${home}#contact`} class="text-sm text-surface-600 hover:text-surface-900 py-2">{t.nav.contact}</a>
         <a href={blog} class={`py-2 ${link(onBlog)}`} aria-current={onBlog ? "page" : undefined}>{t.nav.blog}</a>
         {alt && <div class="pt-2"><LanguageSwitcher lang={lang} alt={alt} /></div>}

@@ -1,0 +1,232 @@
+---
+import { getUi, type Lang } from "../i18n/ui";
+import { projectGroups } from "../data/projects";
+
+interface Props {
+  lang?: Lang;
+}
+const { lang = "en" } = Astro.props;
+const t = getUi(lang);
+const base = import.meta.env.BASE_URL;
+const home = lang === "es" ? `${base}es/` : base;
+const external = { target: "_blank", rel: "noopener noreferrer" };
+
+const gb = (n: number, approx?: boolean) => `${approx ? "~" : ""}${n} GB`;
+
+// The memory grid: every square holds `cell` GB. When the grid scrolls into
+// view, the squares the 4-bit build no longer needs go dark from the end,
+// then the ones it keeps light up.
+function grid(size: { from: number; to: number; cell: number }) {
+  const total = Math.round(size.from / size.cell);
+  const kept = Math.max(1, Math.round(size.to / size.cell));
+  const removed = total - kept;
+  return Array.from({ length: total }, (_, i) => ({
+    kept: i < kept,
+    delay: i < kept ? removed * 22 + 120 + i * 35 : (total - 1 - i) * 22,
+  }));
+}
+---
+
+<section id="projects" class="projects bg-surface-950 pt-16 pb-20 sm:pt-20 sm:pb-24 lg:pt-24 lg:pb-28">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="max-w-2xl mb-12 sm:mb-16">
+      <p class="text-xs font-medium text-brand-400 uppercase tracking-wider mb-3">{t.projects.eyebrow}</p>
+      <h2 class="text-2xl sm:text-3xl font-semibold text-ivory tracking-tight">{t.projects.title}</h2>
+      <p class="mt-4 text-base text-surface-400 leading-relaxed">{t.projects.body}</p>
+    </div>
+
+    <div class="space-y-12">
+      {projectGroups.map((group) => (
+        <div>
+          <p class="flex items-center gap-2 text-xs font-medium text-surface-500 uppercase tracking-wider mb-5">
+            <img src="/logos/huggingface.svg" alt="" width="16" height="16" class="w-4 h-4" />
+            {group.label[lang]}
+          </p>
+
+          <div class="grid grid-cols-1 xl:grid-cols-2 gap-5 sm:gap-6">
+            {group.items.map((p) => {
+              const cells = grid(p.size);
+              const ratio = (p.size.from / p.size.to).toFixed(1);
+              return (
+                <article class="flex flex-col rounded-2xl border border-surface-800 bg-surface-900/70 p-5 sm:p-6 transition-colors hover:border-brand-500/30">
+                  <div class="visual rounded-xl border border-surface-800 bg-surface-950/70 p-5" data-compress>
+                    <div class="visual-text">
+                      <p class="font-brand text-4xl leading-none text-brand-400 tabular-nums">
+                        {ratio}<span class="font-sans font-light">×</span>
+                      </p>
+                      <p class="mt-1.5 text-sm text-surface-400">{t.projects.smaller}</p>
+                      <p class="mt-4 flex items-start gap-2 text-xs text-surface-300">
+                        <span class="swatch mt-[3px]" aria-hidden="true" />
+                        <span>
+                          {gb(p.size.to, p.size.approx)} {t.projects.inLowBit}, {t.projects.fromWord} {gb(p.size.from, p.size.approx)} {t.projects.inBf16}
+                        </span>
+                      </p>
+                      <p class="mt-1 text-[11px] text-surface-500">{t.projects.cell.replace("{n}", String(p.size.cell))}</p>
+                    </div>
+                    <div class="cells" style={`--cols: ${p.size.cols}`} aria-hidden="true">
+                      {cells.map((c) => (
+                        <span class:list={["cell", { kept: c.kept }]} style={`--d: ${c.delay}`} />
+                      ))}
+                    </div>
+                  </div>
+
+                  <h3 class="mt-6 text-2xl font-semibold tracking-tight text-ivory">{p.title}</h3>
+                  <p class="mt-2 text-sm leading-relaxed text-surface-300">{p.description[lang]}</p>
+
+                  <ul class="mt-5 space-y-2.5">
+                    {p.builds.map((b) => {
+                      const [owner, name] = b.repo.split("/");
+                      return (
+                        <li>
+                          <a href={b.url} {...external} aria-label={`${b.repo}, ${t.projects.open}`} class="group/build flex items-center gap-3.5 rounded-lg border border-surface-800 bg-surface-950/50 px-4 py-3 transition-colors hover:border-brand-500/50 hover:bg-surface-800/60">
+                            <img src="/logos/huggingface.svg" alt="" width="20" height="20" class="w-5 h-5 shrink-0" />
+                            <div class="min-w-0 flex-1">
+                              <p class="font-brand text-xs [overflow-wrap:break-word]">
+                                <span class="text-surface-500">{owner}/</span><wbr /><span class="text-ivory">{name}</span>
+                              </p>
+                              <p class="mt-1 text-xs text-surface-400">{b.summary[lang]}</p>
+                              {b.metric && (
+                                <p class="sm:hidden mt-1 text-xs text-surface-400">
+                                  <span class="font-brand text-brand-400">{b.metric.value}</span> {b.metric.label[lang]}
+                                </p>
+                              )}
+                            </div>
+                            {b.metric && (
+                              <div class="hidden sm:block shrink-0 text-right">
+                                <p class="font-brand text-sm text-brand-400 tabular-nums">{b.metric.value}</p>
+                                <p class="text-[11px] leading-tight text-surface-500 whitespace-nowrap">{b.metric.label[lang]}</p>
+                              </div>
+                            )}
+                            <svg class="w-4 h-4 shrink-0 text-surface-500 transition group-hover/build:text-brand-400 group-hover/build:translate-x-0.5 group-hover/build:-translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M7 17L17 7M9 7h8v8" />
+                            </svg>
+                          </a>
+                        </li>
+                      );
+                    })}
+                  </ul>
+
+                  <div class="mt-auto pt-5 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
+                    <p class="text-xs text-surface-500">
+                      {t.projects.original}{" "}
+                      <a href={p.original.url} {...external} class="text-surface-300 underline decoration-surface-700 underline-offset-2 transition-colors hover:text-brand-400 hover:decoration-brand-500">
+                        {p.original.name}
+                      </a>
+                      <span class="mx-1.5" aria-hidden="true">·</span>
+                      <span class="text-surface-300">{p.license}</span>
+                    </p>
+                    {p.writeup && (
+                      <a href={`${home}blog/${p.writeup}`} class="group/w inline-flex items-center gap-1.5 text-sm font-medium text-brand-400 transition-colors hover:text-brand-300">
+                        {t.projects.writeup}
+                        <svg class="w-4 h-4 transition-transform group-hover/w:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6" />
+                        </svg>
+                      </a>
+                    )}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Engineering-paper dots and a faint brand glow, so the band reads as a
+     workbench rather than another card grid. */
+  .projects {
+    background-image:
+      radial-gradient(circle at 88% -8%, rgb(107 184 45 / 0.14), transparent 42%),
+      radial-gradient(rgb(255 255 255 / 0.045) 1px, transparent 1px);
+    background-size: auto, 22px 22px;
+  }
+
+  /* Phones: the ratio, then a full-width grid. Wider screens: a strip with
+     the ratio on the left and the grid on the right, the same height in
+     every card so the strips line up across a row. */
+  .visual {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .cells {
+    display: grid;
+    grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+    gap: 5px;
+  }
+  @media (min-width: 640px) {
+    .visual {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      min-height: 9.5rem;
+    }
+    .cells {
+      grid-template-columns: repeat(var(--cols), 1.1rem);
+      gap: 4px;
+      flex-shrink: 0;
+    }
+  }
+
+  .cell {
+    aspect-ratio: 1;
+    border-radius: 3px;
+    border: 1px solid var(--color-surface-700);
+    background: transparent;
+    transition:
+      background-color 0.45s ease,
+      border-color 0.45s ease,
+      box-shadow 0.45s ease;
+    transition-delay: calc(var(--d) * 1ms);
+  }
+  .cell.kept {
+    background: var(--color-brand-500);
+    border-color: var(--color-brand-400);
+    box-shadow: 0 0 10px rgb(107 184 45 / 0.35);
+  }
+  /* Before the grid is seen, every square is full: the bf16 footprint. */
+  .is-pending .cell {
+    background: var(--color-surface-600);
+    border-color: var(--color-surface-600);
+    box-shadow: none;
+  }
+  .swatch {
+    flex-shrink: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    background: var(--color-brand-500);
+    box-shadow: 0 0 6px rgb(107 184 45 / 0.4);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cell { transition: none; }
+  }
+</style>
+
+<script>
+  // Without JavaScript, or with reduced motion, the grids simply show the
+  // compressed state. Otherwise each grid starts full and compresses the
+  // first time it scrolls into view.
+  const grids = document.querySelectorAll<HTMLElement>("[data-compress]");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (grids.length && !reduce && "IntersectionObserver" in window) {
+    grids.forEach((g) => g.classList.add("is-pending"));
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          e.target.classList.remove("is-pending");
+          io.unobserve(e.target);
+        }
+      },
+      { threshold: 0.4 },
+    );
+    grids.forEach((g) => io.observe(g));
+  }
+</script>
