@@ -122,3 +122,17 @@ input[type="search"]::-webkit-search-cancel-button:hover {
 .prose tbody tr:last-child td {
   @apply border-b-0;
 }
+
+/* Long identifiers in table cells may break instead of widening the table. */
+.prose td code {
+  overflow-wrap: anywhere;
+}
+
+/* On narrow screens a wide table scrolls inside the column instead of
+   pushing the whole page sideways. Desktop layout is unchanged. */
+@media (max-width: 767px) {
+  .prose table {
+    display: block;
+    overflow-x: auto;
+  }
+}
