@@ -17,8 +17,17 @@ export interface Project {
   original: { name: string; url: string };
   license: string;
   // Memory footprint before and after quantization, drawn as a grid in
-  // which every square holds `cell` GB.
-  size: { from: number; to: number; cell: number; cols: number; approx?: boolean };
+  // which every square holds `cell` units (GB unless `unit` says MB). When a
+  // repo holds several checkpoints, `scope` names the one the numbers describe.
+  size: {
+    from: number;
+    to: number;
+    unit?: "GB" | "MB";
+    cell: number;
+    cols: number;
+    approx?: boolean;
+    scope?: Localized;
+  };
   builds: Build[];
   // Slug of a blog post that evaluates this project, if there is one.
   writeup?: string;
@@ -32,11 +41,17 @@ export interface ProjectGroup {
 
 const agreement: Localized = {
   en: "next-token agreement with bf16",
-  es: "coincidencia del token siguiente con bf16",
+  es: "mismo token siguiente que bf16",
+};
+
+const sameAnswer: Localized = {
+  en: "same answer as the original",
+  es: "misma respuesta que el original",
 };
 
 // Grouped so open-source repositories can be added later as another group
-// without touching the section layout.
+// without touching the section layout. Newest first; with an odd count, the
+// last item spans both columns on wide screens.
 export const projectGroups: ProjectGroup[] = [
   {
     id: "models",
@@ -46,25 +61,42 @@ export const projectGroups: ProjectGroup[] = [
     },
     items: [
       {
-        title: "LatamGPT 70B",
+        title: "laya",
         description: {
-          en: "The LatamGPT project's 70B model, built on Llama 3.1, with 4-bit weights and activations for Blackwell GPUs. We calibrated it on Spanish data on a single RTX 5090 workstation. Quality evaluations are still pending.",
-          es: "El modelo de 70B del proyecto LatamGPT, construido sobre Llama 3.1, con pesos y activaciones de 4 bits para GPUs Blackwell. Lo calibramos con datos en español en una sola estación de trabajo con una RTX 5090. Las evaluaciones de calidad todavía están pendientes.",
+          en: "A model that labels, scores or routes a ticket or an email in one forward pass. One build keeps the original's speed and repeatable answers; the other needs as little as a third of the GPU memory, but batching can change its answers.",
+          es: "Un modelo que clasifica, puntúa o deriva un ticket o un correo en una sola pasada. Un build mantiene la velocidad del original y respuestas repetibles; el otro puede ocupar apenas un tercio de la memoria de GPU, pero sus respuestas pueden cambiar según cómo se agrupen las consultas.",
         },
         original: {
-          name: "LatamGPT (Llama 3.1 70B)",
-          url: "https://huggingface.co/latam-gpt/Llama-3.1-70B-LatamGPT-SFT-1.0",
+          name: "laya (ModernBERT, mmBERT)",
+          url: "https://huggingface.co/convaiinnovations/laya",
         },
-        license: "Llama 3.1 Community License",
-        size: { from: 140, to: 40, cell: 4, cols: 7, approx: true },
+        license: "Apache 2.0",
+        size: {
+          from: 843,
+          to: 349,
+          unit: "MB",
+          cell: 30,
+          cols: 7,
+          scope: { en: "English checkpoint", es: "Checkpoint en inglés" },
+        },
         builds: [
           {
-            repo: "hoja-solutions/Llama-3.1-70B-LatamGPT-SFT-1.0-NVFP4",
-            url: "https://huggingface.co/hoja-solutions/Llama-3.1-70B-LatamGPT-SFT-1.0-NVFP4",
+            repo: "hoja-solutions/laya-NVFP4A16",
+            url: "https://huggingface.co/hoja-solutions/laya-NVFP4A16",
             summary: {
-              en: "4-bit weights and activations · Blackwell GPUs with vLLM",
-              es: "pesos y activaciones de 4 bits · GPUs Blackwell con vLLM",
+              en: "4-bit weights, bf16 activations",
+              es: "pesos de 4 bits, activaciones bf16",
             },
+            metric: { value: "89.1%", label: sameAnswer },
+          },
+          {
+            repo: "hoja-solutions/laya-NVFP4",
+            url: "https://huggingface.co/hoja-solutions/laya-NVFP4",
+            summary: {
+              en: "4-bit weights and activations",
+              es: "pesos y activaciones de 4 bits",
+            },
+            metric: { value: "83.8%", label: sameAnswer },
           },
         ],
       },
@@ -101,6 +133,29 @@ export const projectGroups: ProjectGroup[] = [
           },
         ],
         writeup: "humanizer-model-vs-skill",
+      },
+      {
+        title: "LatamGPT 70B",
+        description: {
+          en: "The LatamGPT project's 70B model, built on Llama 3.1, with 4-bit weights and activations for Blackwell GPUs. We calibrated it on Spanish data on a single RTX 5090 workstation. Quality evaluations are still pending.",
+          es: "El modelo de 70B del proyecto LatamGPT, construido sobre Llama 3.1, con pesos y activaciones de 4 bits para GPUs Blackwell. Lo calibramos con datos en español en una sola estación de trabajo con una RTX 5090. Las evaluaciones de calidad todavía están pendientes.",
+        },
+        original: {
+          name: "LatamGPT (Llama 3.1 70B)",
+          url: "https://huggingface.co/latam-gpt/Llama-3.1-70B-LatamGPT-SFT-1.0",
+        },
+        license: "Llama 3.1 Community License",
+        size: { from: 140, to: 40, cell: 4, cols: 7, approx: true },
+        builds: [
+          {
+            repo: "hoja-solutions/Llama-3.1-70B-LatamGPT-SFT-1.0-NVFP4",
+            url: "https://huggingface.co/hoja-solutions/Llama-3.1-70B-LatamGPT-SFT-1.0-NVFP4",
+            summary: {
+              en: "4-bit weights and activations · Blackwell GPUs with vLLM",
+              es: "pesos y activaciones de 4 bits · GPUs Blackwell con vLLM",
+            },
+          },
+        ],
       },
     ],
   },

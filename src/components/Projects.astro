@@ -11,7 +11,7 @@ const base = import.meta.env.BASE_URL;
 const home = lang === "es" ? `${base}es/` : base;
 const external = { target: "_blank", rel: "noopener noreferrer" };
 
-const gb = (n: number, approx?: boolean) => `${approx ? "~" : ""}${n} GB`;
+const amount = (n: number, unit = "GB", approx?: boolean) => `${approx ? "~" : ""}${n} ${unit}`;
 
 // The memory grid: every square holds `cell` GB. When the grid scrolls into
 // view, the squares the 4-bit build no longer needs go dark from the end,
@@ -44,11 +44,19 @@ function grid(size: { from: number; to: number; cell: number }) {
           </p>
 
           <div class="grid grid-cols-1 xl:grid-cols-2 gap-5 sm:gap-6">
-            {group.items.map((p) => {
+            {group.items.map((p, i) => {
               const cells = grid(p.size);
               const ratio = (p.size.from / p.size.to).toFixed(1);
+              const { unit, approx, scope } = p.size;
+              // An odd last card fills the row: the strip on the left lines up
+              // with the left card above, the text with the right one (the
+              // gap is the column gap plus both cards' padding and border).
+              const wide = group.items.length % 2 === 1 && i === group.items.length - 1;
               return (
-                <article class="flex flex-col rounded-2xl border border-surface-800 bg-surface-900/70 p-5 sm:p-6 transition-colors hover:border-brand-500/30">
+                <article class:list={[
+                  "flex flex-col rounded-2xl border border-surface-800 bg-surface-900/70 p-5 sm:p-6 transition-colors hover:border-brand-500/30",
+                  wide && "xl:col-span-2 xl:grid xl:grid-cols-2 xl:gap-x-[74px]",
+                ]}>
                   <div class="visual rounded-xl border border-surface-800 bg-surface-950/70 p-5" data-compress>
                     <div class="visual-text">
                       <p class="font-brand text-4xl leading-none text-brand-400 tabular-nums">
@@ -58,10 +66,12 @@ function grid(size: { from: number; to: number; cell: number }) {
                       <p class="mt-4 flex items-start gap-2 text-xs text-surface-300">
                         <span class="swatch mt-[3px]" aria-hidden="true" />
                         <span>
-                          {gb(p.size.to, p.size.approx)} {t.projects.inLowBit}, {t.projects.fromWord} {gb(p.size.from, p.size.approx)} {t.projects.inBf16}
+                          {amount(p.size.to, unit, approx)} {t.projects.inLowBit}, {t.projects.fromWord} {amount(p.size.from, unit, approx)} {t.projects.inHighBit}
                         </span>
                       </p>
-                      <p class="mt-1 text-[11px] text-surface-500">{t.projects.cell.replace("{n}", String(p.size.cell))}</p>
+                      <p class="mt-1 text-[11px] text-surface-500">
+                        {scope && `${scope[lang]}. `}{t.projects.cell.replace("{n}", amount(p.size.cell, unit))}
+                      </p>
                     </div>
                     <div class="cells" style={`--cols: ${p.size.cols}`} aria-hidden="true">
                       {cells.map((c) => (
@@ -70,59 +80,61 @@ function grid(size: { from: number; to: number; cell: number }) {
                     </div>
                   </div>
 
-                  <h3 class="mt-6 text-2xl font-semibold tracking-tight text-ivory">{p.title}</h3>
-                  <p class="mt-2 text-sm leading-relaxed text-surface-300">{p.description[lang]}</p>
+                  <div class:list={["mt-6 flex flex-1 flex-col", wide && "xl:mt-0"]}>
+                    <h3 class="text-2xl font-semibold tracking-tight text-ivory">{p.title}</h3>
+                    <p class="mt-2 text-sm leading-relaxed text-surface-300">{p.description[lang]}</p>
 
-                  <ul class="mt-5 space-y-2.5">
-                    {p.builds.map((b) => {
-                      const [owner, name] = b.repo.split("/");
-                      return (
-                        <li>
-                          <a href={b.url} {...external} aria-label={`${b.repo}, ${t.projects.open}`} class="group/build flex items-center gap-3.5 rounded-lg border border-surface-800 bg-surface-950/50 px-4 py-3 transition-colors hover:border-brand-500/50 hover:bg-surface-800/60">
-                            <img src="/logos/huggingface.svg" alt="" width="20" height="20" class="w-5 h-5 shrink-0" />
-                            <div class="min-w-0 flex-1">
-                              <p class="font-brand text-xs [overflow-wrap:break-word]">
-                                <span class="text-surface-500">{owner}/</span><wbr /><span class="text-ivory">{name}</span>
-                              </p>
-                              <p class="mt-1 text-xs text-surface-400">{b.summary[lang]}</p>
-                              {b.metric && (
-                                <p class="sm:hidden mt-1 text-xs text-surface-400">
-                                  <span class="font-brand text-brand-400">{b.metric.value}</span> {b.metric.label[lang]}
+                    <ul class="mt-5 space-y-2.5">
+                      {p.builds.map((b) => {
+                        const [owner, name] = b.repo.split("/");
+                        return (
+                          <li>
+                            <a href={b.url} {...external} aria-label={`${b.repo}, ${t.projects.open}`} class="group/build flex items-center gap-3.5 rounded-lg border border-surface-800 bg-surface-950/50 px-4 py-3 transition-colors hover:border-brand-500/50 hover:bg-surface-800/60">
+                              <img src="/logos/huggingface.svg" alt="" width="20" height="20" class="w-5 h-5 shrink-0" />
+                              <div class="min-w-0 flex-1">
+                                <p class="font-brand text-xs [overflow-wrap:break-word]">
+                                  <span class="text-surface-500">{owner}/</span><wbr /><span class="text-ivory">{name}</span>
                                 </p>
-                              )}
-                            </div>
-                            {b.metric && (
-                              <div class="hidden sm:block shrink-0 text-right">
-                                <p class="font-brand text-sm text-brand-400 tabular-nums">{b.metric.value}</p>
-                                <p class="text-[11px] leading-tight text-surface-500 whitespace-nowrap">{b.metric.label[lang]}</p>
+                                <p class="mt-1 text-xs text-surface-400">{b.summary[lang]}</p>
+                                {b.metric && (
+                                  <p class="sm:hidden mt-1 text-xs text-surface-400">
+                                    <span class="font-brand text-brand-400">{b.metric.value}</span> {b.metric.label[lang]}
+                                  </p>
+                                )}
                               </div>
-                            )}
-                            <svg class="w-4 h-4 shrink-0 text-surface-500 transition group-hover/build:text-brand-400 group-hover/build:translate-x-0.5 group-hover/build:-translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M7 17L17 7M9 7h8v8" />
-                            </svg>
-                          </a>
-                        </li>
-                      );
-                    })}
-                  </ul>
+                              {b.metric && (
+                                <div class="hidden sm:block shrink-0 text-right">
+                                  <p class="font-brand text-sm text-brand-400 tabular-nums">{b.metric.value}</p>
+                                  <p class="text-[11px] leading-tight text-surface-500 whitespace-nowrap">{b.metric.label[lang]}</p>
+                                </div>
+                              )}
+                              <svg class="w-4 h-4 shrink-0 text-surface-500 transition group-hover/build:text-brand-400 group-hover/build:translate-x-0.5 group-hover/build:-translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M7 17L17 7M9 7h8v8" />
+                              </svg>
+                            </a>
+                          </li>
+                        );
+                      })}
+                    </ul>
 
-                  <div class="mt-auto pt-5 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
-                    <p class="text-xs text-surface-500">
-                      {t.projects.original}{" "}
-                      <a href={p.original.url} {...external} class="text-surface-300 underline decoration-surface-700 underline-offset-2 transition-colors hover:text-brand-400 hover:decoration-brand-500">
-                        {p.original.name}
-                      </a>
-                      <span class="mx-1.5" aria-hidden="true">·</span>
-                      <span class="text-surface-300">{p.license}</span>
-                    </p>
-                    {p.writeup && (
-                      <a href={`${home}blog/${p.writeup}`} class="group/w inline-flex items-center gap-1.5 text-sm font-medium text-brand-400 transition-colors hover:text-brand-300">
-                        {t.projects.writeup}
-                        <svg class="w-4 h-4 transition-transform group-hover/w:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6" />
-                        </svg>
-                      </a>
-                    )}
+                    <div class="mt-auto pt-5 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
+                      <p class="text-xs text-surface-500">
+                        {t.projects.original}{" "}
+                        <a href={p.original.url} {...external} class="text-surface-300 underline decoration-surface-700 underline-offset-2 transition-colors hover:text-brand-400 hover:decoration-brand-500">
+                          {p.original.name}
+                        </a>
+                        <span class="mx-1.5" aria-hidden="true">·</span>
+                        <span class="text-surface-300">{p.license}</span>
+                      </p>
+                      {p.writeup && (
+                        <a href={`${home}blog/${p.writeup}`} class="group/w inline-flex items-center gap-1.5 text-sm font-medium text-brand-400 transition-colors hover:text-brand-300">
+                          {t.projects.writeup}
+                          <svg class="w-4 h-4 transition-transform group-hover/w:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6" />
+                          </svg>
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </article>
               );
