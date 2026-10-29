@@ -12,8 +12,10 @@ const t = getUi(lang);
 const base = import.meta.env.BASE_URL;
 const home = lang === "es" ? `${base}es/` : base;
 const blog = `${home}blog`;
+const projects = `${home}projects`;
 const path = Astro.url.pathname;
 const onBlog = path.startsWith(`${base}blog`) || path.startsWith(`${base}es/blog`);
+const onProjects = path.startsWith(`${base}projects`) || path.startsWith(`${base}es/projects`);
 
 const link = (active: boolean) =>
   active
@@ -21,7 +23,7 @@ const link = (active: boolean) =>
     : "text-sm text-surface-600 hover:text-surface-900 transition-colors";
 ---
 
-<nav class="sticky top-0 z-50 bg-ivory/90 backdrop-blur-sm border-b border-surface-200/50">
+<nav class="[view-transition-name:site-nav] sticky top-0 z-50 bg-ivory/90 backdrop-blur-sm border-b border-surface-200/50">
   <div class="max-w-7xl mx-auto px-6 lg:px-8">
     <div class="flex items-center justify-between h-14">
       <a href={home} class="flex items-center gap-2">
@@ -31,8 +33,7 @@ const link = (active: boolean) =>
 
       <div class="hidden md:flex items-center gap-7">
         <a href={`${home}#services`} class={link(false)}>{t.nav.services}</a>
-        <a href={`${home}#technologies`} class={link(false)}>{t.nav.technologies}</a>
-        <a href={`${home}#projects`} class={link(false)}>{t.nav.projects}</a>
+        <a href={projects} class={link(onProjects)} aria-current={onProjects ? "page" : undefined}>{t.nav.projects}</a>
         <a href={`${home}#contact`} class={link(false)}>{t.nav.contact}</a>
         <a href={blog} class={link(onBlog)} aria-current={onBlog ? "page" : undefined}>{t.nav.blog}</a>
         {alt && <LanguageSwitcher lang={lang} alt={alt} />}
@@ -57,8 +58,7 @@ const link = (active: boolean) =>
     <div id="mobile-menu" class="hidden md:hidden pb-3 border-t border-surface-200/50 mt-2 pt-3">
       <div class="flex flex-col gap-2">
         <a href={`${home}#services`} class="text-sm text-surface-600 hover:text-surface-900 py-2">{t.nav.services}</a>
-        <a href={`${home}#technologies`} class="text-sm text-surface-600 hover:text-surface-900 py-2">{t.nav.technologies}</a>
-        <a href={`${home}#projects`} class="text-sm text-surface-600 hover:text-surface-900 py-2">{t.nav.projects}</a>
+        <a href={projects} class={`py-2 ${link(onProjects)}`} aria-current={onProjects ? "page" : undefined}>{t.nav.projects}</a>
         <a href={`${home}#contact`} class="text-sm text-surface-600 hover:text-surface-900 py-2">{t.nav.contact}</a>
         <a href={blog} class={`py-2 ${link(onBlog)}`} aria-current={onBlog ? "page" : undefined}>{t.nav.blog}</a>
         {alt && <div class="pt-2"><LanguageSwitcher lang={lang} alt={alt} /></div>}

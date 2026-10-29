@@ -1,0 +1,238 @@
+---
+import { getUi, type Lang } from "../i18n/ui";
+import { clients, type Visual } from "../data/clients";
+
+interface Props {
+  lang?: Lang;
+}
+const { lang = "en" } = Astro.props;
+const t = getUi(lang);
+const external = { target: "_blank", rel: "noopener noreferrer" };
+
+// Wireframe drawings in the same palette as the Services illustrations. Lines
+// stand in for text, so they read the same in both languages.
+const visuals: Record<Visual, string> = {
+  // A WhatsApp turn: the user's message, a tool running, Max's answer, and
+  // the guard and the operator who can take over.
+  assistant: `<svg viewBox="0 0 220 120" width="220" height="120" fill="none"><path d="M96 10 l8 -3 l8 3 v6 c0 5 -3.5 8 -8 10 c-4.5 -2 -8 -5 -8 -10 z" fill="#d7f0a5" stroke="#4d9622" stroke-width="1.8" stroke-linejoin="round"/><rect x="120" y="6" width="90" height="22" rx="11" fill="#6bb82d"/><line x1="132" y1="17" x2="184" y2="17" stroke="#f6fde8" stroke-width="2.5" stroke-linecap="round"/><rect x="10" y="38" width="118" height="20" rx="10" fill="#fcfaf5" stroke="#d8d1c1" stroke-width="1.5"/><circle cx="22" cy="48" r="4.5" stroke="#4d9622" stroke-width="2" stroke-dasharray="18 10" stroke-linecap="round"/><line x1="34" y1="48" x2="114" y2="48" stroke="#b5ada0" stroke-width="2" stroke-linecap="round"/><rect x="10" y="68" width="156" height="44" rx="11" fill="#fcfaf5" stroke="#d8d1c1" stroke-width="1.5"/><line x1="24" y1="83" x2="148" y2="83" stroke="#6e675b" stroke-width="2.5" stroke-linecap="round"/><line x1="24" y1="97" x2="110" y2="97" stroke="#b5ada0" stroke-width="2.5" stroke-linecap="round"/><circle cx="194" cy="96" r="13" fill="#d7f0a5" stroke="#4d9622" stroke-width="2"/><circle cx="194" cy="92" r="4" fill="#4d9622"/><path d="M186 104 c2 -5 14 -5 16 0" stroke="#4d9622" stroke-width="2" stroke-linecap="round"/></svg>`,
+  // A chat client, the OAuth sign-in, and the phone where the customer
+  // approves what the chat asked for.
+  connector: `<svg viewBox="0 0 220 120" width="220" height="120" fill="none"><rect x="8" y="24" width="66" height="72" rx="6" fill="#fcfaf5" stroke="#b5ada0" stroke-width="2"/><line x1="8" y1="36" x2="74" y2="36" stroke="#b5ada0" stroke-width="2"/><circle cx="15" cy="30" r="1.6" fill="#b5ada0"/><circle cx="21" cy="30" r="1.6" fill="#b5ada0"/><circle cx="27" cy="30" r="1.6" fill="#b5ada0"/><rect x="30" y="46" width="36" height="10" rx="5" fill="#ece7db"/><line x1="16" y1="68" x2="62" y2="68" stroke="#6bb82d" stroke-width="2" stroke-linecap="round"/><line x1="16" y1="78" x2="50" y2="78" stroke="#b5ada0" stroke-width="2" stroke-linecap="round"/><line x1="16" y1="87" x2="56" y2="87" stroke="#b5ada0" stroke-width="2" stroke-linecap="round"/><path d="M80 60 H90" stroke="#b5ada0" stroke-width="2" stroke-dasharray="2 4" stroke-linecap="round"/><circle cx="110" cy="60" r="17" fill="#d7f0a5" stroke="#4d9622" stroke-width="2.5"/><path d="M105 58 v-4 a5 5 0 0 1 10 0 v4" stroke="#3a741c" stroke-width="2.2" stroke-linecap="round"/><rect x="102" y="58" width="16" height="12" rx="2.5" fill="#4d9622"/><path d="M130 60 H142" stroke="#b5ada0" stroke-width="2" stroke-dasharray="2 4" stroke-linecap="round"/><rect x="148" y="12" width="60" height="96" rx="10" fill="#fcfaf5" stroke="#4d9622" stroke-width="2.5"/><line x1="170" y1="20" x2="186" y2="20" stroke="#b5ada0" stroke-width="2" stroke-linecap="round"/><rect x="156" y="30" width="44" height="30" rx="5" fill="#edf9ce" stroke="#b5e470" stroke-width="1.5"/><line x1="163" y1="40" x2="190" y2="40" stroke="#4d9622" stroke-width="2" stroke-linecap="round"/><line x1="163" y1="50" x2="182" y2="50" stroke="#8fd042" stroke-width="2" stroke-linecap="round"/><rect x="156" y="72" width="44" height="16" rx="8" fill="#6bb82d"/><path d="M171 80 l4 4 l8 -8" stroke="#fcfaf5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  // The app's chat with a balance widget and a transfer quote, flanked by a
+  // code input and a payment QR.
+  widgets: `<svg viewBox="0 0 220 130" width="220" height="130" fill="none"><rect x="56" y="8" width="108" height="140" rx="14" fill="#fcfaf5" stroke="#4d9622" stroke-width="2.5"/><line x1="98" y1="16" x2="122" y2="16" stroke="#b5ada0" stroke-width="2" stroke-linecap="round"/><rect x="66" y="26" width="58" height="12" rx="6" fill="#ece7db"/><rect x="66" y="44" width="88" height="32" rx="6" fill="#d7f0a5" stroke="#6bb82d" stroke-width="1.5"/><line x1="74" y1="53" x2="100" y2="53" stroke="#4d9622" stroke-width="1.8" stroke-linecap="round"/><line x1="74" y1="66" x2="128" y2="66" stroke="#3a741c" stroke-width="5" stroke-linecap="round"/><rect x="66" y="82" width="88" height="44" rx="6" fill="#fcfaf5" stroke="#d8d1c1" stroke-width="1.5"/><line x1="74" y1="92" x2="134" y2="92" stroke="#6e675b" stroke-width="2" stroke-linecap="round"/><line x1="74" y1="101" x2="112" y2="101" stroke="#b5ada0" stroke-width="2" stroke-linecap="round"/><rect x="74" y="109" width="34" height="11" rx="5.5" fill="#6bb82d"/><rect x="112" y="109" width="34" height="11" rx="5.5" stroke="#b5ada0" stroke-width="1.5"/><rect x="174" y="30" width="38" height="44" rx="5" fill="#fcfaf5" stroke="#4d9622" stroke-width="2"/><rect x="180" y="36" width="9" height="9" rx="1" stroke="#3a741c" stroke-width="2"/><rect x="197" y="36" width="9" height="9" rx="1" stroke="#3a741c" stroke-width="2"/><rect x="180" y="53" width="9" height="9" rx="1" stroke="#3a741c" stroke-width="2"/><rect x="197" y="53" width="4" height="4" fill="#3a741c"/><rect x="203" y="58" width="3" height="4" fill="#3a741c"/><rect x="192" y="47" width="3" height="3" fill="#3a741c"/><line x1="182" y1="68" x2="204" y2="68" stroke="#8fd042" stroke-width="2" stroke-linecap="round"/><rect x="6" y="64" width="42" height="26" rx="5" fill="#fcfaf5" stroke="#4d9622" stroke-width="2"/><rect x="11" y="72" width="7" height="10" rx="1.5" fill="#d7f0a5" stroke="#6bb82d" stroke-width="1.2"/><rect x="20" y="72" width="7" height="10" rx="1.5" fill="#d7f0a5" stroke="#6bb82d" stroke-width="1.2"/><rect x="29" y="72" width="7" height="10" rx="1.5" stroke="#b5ada0" stroke-width="1.2"/><rect x="38" y="72" width="7" height="10" rx="1.5" stroke="#b5ada0" stroke-width="1.2"/></svg>`,
+  // A GPU and a comparison of candidates, with the one that fits picked out.
+  evaluation: `<svg viewBox="0 0 220 120" width="220" height="120" fill="none"><rect x="10" y="30" width="64" height="60" rx="6" fill="#d7f0a5" stroke="#4d9622" stroke-width="2.5"/><rect x="28" y="46" width="28" height="28" rx="3" fill="#8fd042" stroke="#4d9622" stroke-width="2"/><path d="M34 40 v6 M42 40 v6 M50 40 v6 M34 74 v6 M42 74 v6 M50 74 v6" stroke="#4d9622" stroke-width="2" stroke-linecap="round"/><path d="M78 60 H90" stroke="#b5ada0" stroke-width="2" stroke-dasharray="2 4" stroke-linecap="round"/><rect x="94" y="18" width="116" height="84" rx="6" fill="#fcfaf5" stroke="#d8d1c1" stroke-width="1.5"/><line x1="104" y1="34" x2="168" y2="34" stroke="#b5e470" stroke-width="7" stroke-linecap="round"/><line x1="104" y1="52" x2="152" y2="52" stroke="#4d9622" stroke-width="7" stroke-linecap="round"/><line x1="104" y1="70" x2="184" y2="70" stroke="#b5e470" stroke-width="7" stroke-linecap="round"/><line x1="104" y1="88" x2="138" y2="88" stroke="#b5e470" stroke-width="7" stroke-linecap="round"/><circle cx="168" cy="52" r="8" fill="#6bb82d"/><path d="M164 52 l3 3 l5 -6" stroke="#fcfaf5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  // Three sources through one pipeline into a dashboard.
+  pipeline: `<svg viewBox="0 0 220 120" width="220" height="120" fill="none"><path d="M10 17 v14 a15 5 0 0 0 30 0 v-14" fill="#d7f0a5" stroke="#4d9622" stroke-width="2"/><ellipse cx="25" cy="17" rx="15" ry="5" fill="#8fd042" stroke="#4d9622" stroke-width="2"/><path d="M10 51 v14 a15 5 0 0 0 30 0 v-14" fill="#d7f0a5" stroke="#4d9622" stroke-width="2"/><ellipse cx="25" cy="51" rx="15" ry="5" fill="#8fd042" stroke="#4d9622" stroke-width="2"/><path d="M10 85 v14 a15 5 0 0 0 30 0 v-14" fill="#d7f0a5" stroke="#4d9622" stroke-width="2"/><ellipse cx="25" cy="85" rx="15" ry="5" fill="#8fd042" stroke="#4d9622" stroke-width="2"/><path d="M44 26 C 64 26 64 56 84 56" stroke="#b5ada0" stroke-width="1.8"/><path d="M44 60 H84" stroke="#b5ada0" stroke-width="1.8"/><path d="M44 94 C 64 94 64 64 84 64" stroke="#b5ada0" stroke-width="1.8"/><rect x="84" y="44" width="32" height="32" rx="6" fill="#d7f0a5" stroke="#4d9622" stroke-width="2.5"/><path d="M93 54 l6 6 l-6 6 M101 54 l6 6 l-6 6" stroke="#3a741c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M118 60 H136 M132 56 l4 4 l-4 4" stroke="#4d9622" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="142" y="18" width="70" height="84" rx="6" fill="#fcfaf5" stroke="#4d9622" stroke-width="2.5"/><line x1="142" y1="30" x2="212" y2="30" stroke="#4d9622" stroke-width="2"/><polyline points="150,50 162,44 174,47 186,38 202,41" stroke="#6bb82d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="150" y="72" width="8" height="22" fill="#8fd042" stroke="#4d9622" stroke-width="1.5"/><rect x="162" y="62" width="8" height="32" fill="#8fd042" stroke="#4d9622" stroke-width="1.5"/><rect x="174" y="78" width="8" height="16" fill="#8fd042" stroke="#4d9622" stroke-width="1.5"/><rect x="186" y="56" width="8" height="38" fill="#8fd042" stroke="#4d9622" stroke-width="1.5"/></svg>`,
+};
+
+---
+
+<div data-client-tabs>
+  <div role="tablist" aria-label={t.projects.forClients} class="grid grid-cols-3 gap-2 sm:gap-4">
+    {clients.map((c, i) => (
+      <button
+        type="button"
+        role="tab"
+        id={`client-tab-${i}`}
+        aria-controls={c.id}
+        aria-selected={i === 0 ? "true" : "false"}
+        aria-label={c.name}
+        tabindex={i === 0 ? 0 : -1}
+        class="tab group relative flex h-14 sm:h-20 items-center justify-center rounded-xl border border-surface-300/70 px-3 text-surface-600 transition-colors hover:border-surface-400 hover:text-surface-900 aria-selected:border-brand-500 aria-selected:bg-ivory aria-selected:text-surface-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
+      >
+        <span class="sm:hidden text-sm font-medium">{c.short}</span>
+        <span class="hidden sm:flex items-center gap-2.5 opacity-50 transition-opacity group-hover:opacity-90 group-aria-selected:opacity-100">
+          <img
+            src={c.logo.src}
+            alt=""
+            width={c.logo.width}
+            height={c.logo.height}
+            class="w-auto"
+            style={`height: ${c.logo.shown}px`}
+          />
+          {!c.logo.named && <span class="text-base font-semibold text-surface-900 tracking-tight">{c.name}</span>}
+        </span>
+        <span class="caret" aria-hidden="true" />
+      </button>
+    ))}
+  </div>
+
+  <div class="panels mt-4 sm:mt-5">
+    {clients.map((c, i) => {
+      const single = c.projects.length === 1;
+      return (
+        <div
+          role="tabpanel"
+          id={c.id}
+          aria-labelledby={`client-tab-${i}`}
+          data-active={String(i === 0)}
+          tabindex="0"
+          class="panel scroll-mt-44 flex flex-col rounded-2xl border border-surface-200 bg-ivory p-5 sm:p-8"
+        >
+          {/* Without JavaScript there are no tabs, so each panel names its client. */}
+          <h3 class="panel-name mb-3 text-lg font-semibold text-surface-900">{c.name}</h3>
+          <div class="flex flex-col gap-1 border-b border-surface-200 pb-5 sm:flex-row sm:flex-wrap sm:items-baseline sm:justify-between sm:gap-x-8">
+            <p class="text-base font-medium text-surface-900">{c.about[lang]}</p>
+            <p class="text-sm text-surface-500">
+              {c.place[lang]} ·{" "}
+              <a href={c.link.url} {...external} class="inline-flex items-center gap-1 font-medium text-brand-700 transition-colors hover:text-brand-800">
+                {c.link.label}
+                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            </p>
+          </div>
+
+          <div class:list={["mt-6 flex-1 grid", !single && "gap-8 lg:grid-cols-3"]}>
+            {c.projects.map((p) =>
+              single ? (
+                <article class="grid gap-6 md:grid-cols-2 md:gap-10">
+                  <div class="stage flex min-h-44 items-center justify-center rounded-xl border border-surface-200 px-4 [&_svg]:h-auto [&_svg]:w-full [&_svg]:max-w-[20rem]" aria-hidden="true">
+                    <Fragment set:html={visuals[p.visual]} />
+                  </div>
+                  <div class="flex flex-col justify-center">
+                    <h4 class="text-xl font-semibold text-surface-900 tracking-tight">{p.title[lang]}</h4>
+                    <p class="mt-2 text-base text-surface-600 leading-relaxed">{p.description[lang]}</p>
+                    <p class="mt-4 text-xs text-surface-500">{p.area[lang]}</p>
+                  </div>
+                </article>
+              ) : (
+                <article class="flex flex-col">
+                  <div class="stage flex h-40 items-center justify-center rounded-xl border border-surface-200 px-4" aria-hidden="true">
+                    <Fragment set:html={visuals[p.visual]} />
+                  </div>
+                  <h4 class="mt-5 text-base font-semibold text-surface-900">{p.title[lang]}</h4>
+                  <p class="mt-1.5 text-sm text-surface-600 leading-relaxed">{p.description[lang]}</p>
+                  <p class="mt-auto pt-3 text-xs text-surface-500">{p.area[lang]}</p>
+                </article>
+              ),
+            )}
+          </div>
+        </div>
+      );
+    })}
+  </div>
+</div>
+
+<style>
+  /* The drawings sit on a faint dot grid, like the Projects workbench. */
+  .stage {
+    background-color: var(--color-surface-100);
+    background-image: radial-gradient(rgb(39 35 32 / 0.07) 1px, transparent 1px);
+    background-size: 16px 16px;
+  }
+
+  /* A notch under the open tab, pointing at its panel. */
+  .caret {
+    position: absolute;
+    left: 50%;
+    bottom: -7px;
+    width: 12px;
+    height: 12px;
+    transform: translateX(-50%) rotate(45deg);
+    background: var(--color-ivory);
+    border-right: 1px solid var(--color-brand-500);
+    border-bottom: 1px solid var(--color-brand-500);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  .tab[aria-selected="true"] .caret {
+    opacity: 1;
+  }
+
+  /* Without JavaScript: no tabs, every client's panel in turn. */
+  [data-client-tabs]:not([data-ready]) [role="tablist"] {
+    display: none;
+  }
+  [data-client-tabs]:not([data-ready]) .panel + .panel {
+    margin-top: 1.25rem;
+  }
+  [data-ready] .panel-name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  /* With tabs, wide screens stack the panels in one cell so the section keeps
+     the height of the tallest one and nothing below jumps on a switch. Phones
+     stack projects vertically, so there the panel takes its own height. */
+  [data-ready] .panels {
+    display: grid;
+  }
+  @media (min-width: 1024px) {
+    [data-ready] .panel {
+      grid-area: 1 / 1;
+    }
+    [data-ready] .panel[data-active="false"] {
+      visibility: hidden;
+    }
+  }
+  @media (max-width: 1023.98px) {
+    [data-ready] .panel[data-active="false"] {
+      display: none;
+    }
+  }
+  [data-ready] .panel[data-active="true"] {
+    animation: panel-in 0.25s ease;
+  }
+  @keyframes panel-in {
+    from { opacity: 0; transform: translateY(4px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-ready] .panel[data-active="true"] { animation: none; }
+  }
+</style>
+
+<script>
+  // Tabs per the WAI-ARIA pattern: click or arrow keys switch clients, and
+  // only the open tab is in the tab order.
+  document.querySelectorAll<HTMLElement>("[data-client-tabs]").forEach((root) => {
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const panels = [...root.querySelectorAll<HTMLElement>('[role="tabpanel"]')];
+
+    const select = (index: number, focus = false) => {
+      tabs.forEach((tab, i) => {
+        tab.setAttribute("aria-selected", String(i === index));
+        tab.tabIndex = i === index ? 0 : -1;
+      });
+      panels.forEach((panel, i) => (panel.dataset.active = String(i === index)));
+      if (focus) tabs[index].focus();
+    };
+
+    tabs.forEach((tab, i) => {
+      tab.addEventListener("click", () => select(i));
+      tab.addEventListener("keydown", (e) => {
+        const last = tabs.length - 1;
+        const next: Record<string, number> = {
+          ArrowRight: i === last ? 0 : i + 1,
+          ArrowLeft: i === 0 ? last : i - 1,
+          Home: 0,
+          End: last,
+        };
+        if (!(e.key in next)) return;
+        e.preventDefault();
+        select(next[e.key], true);
+      });
+    });
+
+    root.dataset.ready = "";
+
+    // A link to /projects#<client> opens that client's tab. The browser's
+    // own jump to the anchor happens before the tabs hide the other panels,
+    // so scroll again once the layout is final.
+    const fromHash = () => {
+      const index = panels.findIndex((panel) => `#${panel.id}` === location.hash);
+      if (index < 0) return;
+      select(index);
+      panels[index].scrollIntoView({ behavior: "instant" });
+    };
+    fromHash();
+    window.addEventListener("hashchange", fromHash);
+  });
+</script>

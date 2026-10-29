@@ -1,0 +1,127 @@
+---
+import ClientTabs from "./ClientTabs.astro";
+import { getUi, type Lang } from "../i18n/ui";
+import { clients } from "../data/clients";
+import { projectGroups } from "../data/projects";
+
+interface Props {
+  lang?: Lang;
+  // On the Projects page this section is the page header and shows the full
+  // client tabs; the model cards follow it in their own section. On the
+  // homepage it's a summary: one tile per client and per model, each linking
+  // to its place on the Projects page.
+  page?: boolean;
+}
+const { lang = "en", page = false } = Astro.props;
+const t = getUi(lang);
+const base = import.meta.env.BASE_URL;
+const projectsPage = `${base}${lang === "es" ? "es/" : ""}projects`;
+
+const Title = page ? "h1" : "h2";
+const GroupLabel = page ? "h2" : "h3";
+
+const models = projectGroups.flatMap((group) => group.items);
+const amount = (n: number, unit = "GB", approx?: boolean) => `${approx ? "~" : ""}${n} ${unit}`;
+const label = "text-xs font-medium text-surface-500 uppercase tracking-wider mb-5";
+const arrow = "M5 12h14M13 6l6 6-6 6";
+---
+
+<section id="projects" class="bg-ivory-dark border-y border-surface-200/60 pt-16 pb-20 sm:pt-20 sm:pb-24 lg:pt-24 lg:pb-28">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="mb-10 sm:mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+      <div class="max-w-2xl">
+        <p class="text-xs font-medium text-brand-600 uppercase tracking-wider mb-3">{t.projects.eyebrow}</p>
+        <Title class:list={["font-semibold text-surface-900 tracking-tight", page ? "text-3xl sm:text-4xl" : "text-2xl sm:text-3xl"]}>
+          {t.projects.title}
+        </Title>
+        <p class="mt-4 text-base text-surface-600 leading-relaxed">{t.projects.body}</p>
+      </div>
+      {!page && (
+        <a href={projectsPage} class="group self-start lg:self-auto shrink-0 inline-flex items-center gap-2 rounded-md bg-brand-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-brand-700">
+          {t.projects.seeAll}
+          <svg class="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d={arrow} />
+          </svg>
+        </a>
+      )}
+    </div>
+
+    <GroupLabel class={label}>{t.projects.forClients}</GroupLabel>
+    {page ? (
+      <ClientTabs lang={lang} />
+    ) : (
+      <ul class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+        {clients.map((c) => (
+          <li>
+            <a href={`${projectsPage}#${c.id}`} class="group flex h-full flex-col rounded-xl border border-surface-300/70 bg-ivory p-5 transition-colors hover:border-brand-500/60">
+              <span class="flex h-10 items-center gap-2.5">
+                <img
+                  src={c.logo.src}
+                  alt={c.logo.named ? c.name : ""}
+                  width={c.logo.width}
+                  height={c.logo.height}
+                  loading="lazy"
+                  class="w-auto"
+                  style={`height: ${c.logo.shown}px`}
+                />
+                {!c.logo.named && <span class="text-base font-semibold text-surface-900 tracking-tight">{c.name}</span>}
+              </span>
+              <span class="mt-4 flex items-end justify-between gap-4">
+                <span class="text-sm text-surface-600 leading-relaxed">{c.about[lang]}</span>
+                <svg class="w-4 h-4 shrink-0 mb-0.5 text-surface-400 transition group-hover:translate-x-0.5 group-hover:text-brand-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d={arrow} />
+                </svg>
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    )}
+
+    {!page && (
+      <div class="mt-12 sm:mt-14">
+        <GroupLabel class={label}>{t.projects.openModels}</GroupLabel>
+        <div class="models grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center rounded-2xl bg-surface-950 p-5 sm:p-8">
+          <div class="lg:col-span-4">
+            <p class="text-xl font-semibold text-ivory tracking-tight">{t.projects.modelsTitle}</p>
+            <p class="mt-3 text-sm text-surface-400 leading-relaxed">{t.projects.teaser}</p>
+          </div>
+
+          <ul class="lg:col-span-8 grid grid-cols-3 gap-3 sm:gap-4">
+            {models.map((p) => {
+              const { from, to, unit, approx } = p.size;
+              return (
+                <li>
+                  <a href={`${projectsPage}#${p.id}`} class="flex h-full flex-col rounded-xl border border-surface-800 bg-surface-900/70 p-3.5 sm:p-5 transition-colors hover:border-brand-500/50">
+                    <p class="font-brand text-2xl sm:text-3xl leading-none text-brand-400 tabular-nums">
+                      {(from / to).toFixed(1)}<span class="font-sans font-light">×</span>
+                    </p>
+                    <p class="mt-1.5 text-[11px] sm:text-xs leading-snug text-surface-400">{t.projects.smaller}</p>
+                    {/* The 4-bit build's share of the 16-bit footprint. */}
+                    <div class="mt-4 sm:mt-5 h-1.5 rounded-full bg-surface-700/70" aria-hidden="true">
+                      <div class="h-full rounded-full bg-brand-500" style={`width: ${(to / from) * 100}%`} />
+                    </div>
+                    <p class="mt-4 sm:mt-5 text-sm sm:text-base font-semibold text-ivory">{p.title}</p>
+                    <p class="hidden sm:block mt-1 text-xs text-surface-500">
+                      {amount(to, unit, approx)} {t.projects.inLowBit}, {t.projects.fromWord} {amount(from, unit, approx)}
+                    </p>
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  /* The same workbench dots and glow as the model cards on the Projects page. */
+  .models {
+    background-image:
+      radial-gradient(circle at 92% -20%, rgb(107 184 45 / 0.16), transparent 45%),
+      radial-gradient(rgb(255 255 255 / 0.045) 1px, transparent 1px);
+    background-size: auto, 22px 22px;
+  }
+</style>

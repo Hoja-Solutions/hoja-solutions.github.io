@@ -12,6 +12,8 @@ export interface Build {
 }
 
 export interface Project {
+  // Anchor on the Projects page; the homepage tiles link to it.
+  id: string;
   title: string;
   description: Localized;
   original: { name: string; url: string };
@@ -61,6 +63,7 @@ export const projectGroups: ProjectGroup[] = [
     },
     items: [
       {
+        id: "laya",
         title: "laya",
         description: {
           en: "A model that labels, scores or routes a ticket or an email in one forward pass. One build keeps the original's speed and repeatable answers; the other needs as little as a third of the GPU memory, but batching can change its answers.",
@@ -101,6 +104,7 @@ export const projectGroups: ProjectGroup[] = [
         ],
       },
       {
+        id: "humanizer",
         title: "humanizer",
         description: {
           en: "A model that rewrites AI-written drafts in English and Chinese so they read as human. We published two 4-bit builds: one that stays close to full precision, and one that trades fidelity for throughput on Blackwell's FP4 tensor cores.",
@@ -135,10 +139,11 @@ export const projectGroups: ProjectGroup[] = [
         writeup: "humanizer-model-vs-skill",
       },
       {
+        id: "latamgpt",
         title: "LatamGPT 70B",
         description: {
-          en: "The LatamGPT project's 70B model, built on Llama 3.1, with 4-bit weights and activations for Blackwell GPUs. We calibrated it on Spanish data on a single RTX 5090 workstation. Quality evaluations are still pending.",
-          es: "El modelo de 70B del proyecto LatamGPT, construido sobre Llama 3.1, con pesos y activaciones de 4 bits para GPUs Blackwell. Lo calibramos con datos en español en una sola estación de trabajo con una RTX 5090. Las evaluaciones de calidad todavía están pendientes.",
+          en: "We quantized the LatamGPT project's 70B model, built on Llama 3.1, to 4-bit weights and activations for Blackwell GPUs, and calibrated it on Spanish data on a single RTX 5090 workstation. We haven't published quality evaluations yet.",
+          es: "Cuantizamos el modelo de 70B del proyecto LatamGPT, construido sobre Llama 3.1, a pesos y activaciones de 4 bits para GPUs Blackwell, y lo calibramos con datos en español en una sola estación de trabajo con una RTX 5090. Todavía no publicamos evaluaciones de calidad.",
         },
         original: {
           name: "LatamGPT (Llama 3.1 70B)",

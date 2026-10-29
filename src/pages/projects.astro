@@ -1,0 +1,22 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ProjectsPage from "../components/ProjectsPage.astro";
+import { getUi } from "../i18n/ui";
+
+const lang = "en";
+const t = getUi(lang);
+const base = import.meta.env.BASE_URL;
+const alt = `${base}es/projects`;
+
+const ogImage = Astro.site ? new URL(`${base}og-home.png`, Astro.site).href : undefined;
+---
+
+<BaseLayout
+  lang={lang}
+  alt={alt}
+  title={t.meta.projectsTitle}
+  description={t.meta.projectsDescription}
+  image={ogImage}
+>
+  <ProjectsPage lang={lang} alt={alt} />
+</BaseLayout>

@@ -81,29 +81,29 @@ const groups = [
       </p>
     </div>
 
-    <div class="space-y-10 sm:space-y-12">
+    {/* One row per group on wide screens, label on the left, so the stack
+        reads at a glance instead of taking a screen per group. */}
+    <div class="divide-y divide-surface-200 border-y border-surface-200">
       {groups.map((group) => (
-        <div>
-          <p class="text-xs font-medium text-surface-500 uppercase tracking-wider mb-5">
-            {group.label}
-          </p>
+        <div class="grid grid-cols-1 lg:grid-cols-[13rem_1fr] items-center gap-3 lg:gap-8 py-5">
+          <p class="text-xs font-medium text-surface-500 uppercase tracking-wider">{group.label}</p>
           {/* 6 items per group, and every column count divides 6, so a row is
               never left ragged at any breakpoint. */}
-          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-y-8">
+          <ul class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-3">
             {group.items.map((tech) => (
-              <div class="flex flex-col items-center text-center gap-2 group">
+              <li class="group flex items-center gap-2.5 min-w-0">
                 <img
                   src={`/logos/${tech.slug}.svg`}
-                  alt={tech.name}
-                  width="32"
-                  height="32"
+                  alt=""
+                  width="20"
+                  height="20"
                   loading="lazy"
-                  class="w-8 h-8 object-contain grayscale opacity-70 transition duration-300 group-hover:grayscale-0 group-hover:opacity-100"
+                  class="w-5 h-5 shrink-0 object-contain grayscale opacity-70 transition duration-300 group-hover:grayscale-0 group-hover:opacity-100"
                 />
-                <p class="text-sm font-semibold text-surface-900 leading-tight">{tech.name}</p>
-              </div>
+                <span class="text-sm font-medium text-surface-800 truncate">{tech.name}</span>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       ))}
     </div>

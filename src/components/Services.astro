@@ -37,7 +37,7 @@ const items = t.services.items.map((it, i) => ({ ...it, scene: scenes[i] }));
         <article class="flex flex-col rounded-lg border border-surface-200 bg-surface-50 p-5 transition-colors hover:border-brand-500/50">
           <h3 class="text-base font-medium text-surface-900 mb-1.5">{service.title}</h3>
           <p class="text-sm text-surface-600 leading-relaxed">{service.description}</p>
-          <div class="mt-auto pt-5 flex justify-center" set:html={service.scene} />
+          <div class="mt-auto pt-5 hidden sm:flex justify-center" set:html={service.scene} />
         </article>
       ))}
     </div>

@@ -136,3 +136,13 @@ input[type="search"]::-webkit-search-cancel-button:hover {
     overflow-x: auto;
   }
 }
+
+/* Moving between pages cross-fades instead of flashing white, with no
+   client-side router (so page scripts keep running on every load). The navbar
+   is named in Navbar.astro so it stays put. Browsers without cross-document
+   view transitions just navigate as before. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+}
